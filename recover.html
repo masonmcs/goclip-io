@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Recover License Key — GoClip</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#030303;color:#fff;font-family:'Inter',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:#0a0a0f;border:1px solid rgba(0,255,136,0.2);border-radius:24px;padding:60px 48px;max-width:480px;width:100%;text-align:center}
+.logo{font-size:20px;font-weight:900;letter-spacing:-1px;margin-bottom:40px}
+.logo span{color:#00ff88}
+h1{font-size:28px;font-weight:900;letter-spacing:-1px;margin-bottom:12px}
+p{color:rgba(255,255,255,0.45);font-size:15px;line-height:1.7;margin-bottom:32px}
+input{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:14px 16px;color:#fff;font-size:15px;font-family:inherit;outline:none;margin-bottom:12px;transition:border-color 0.2s}
+input:focus{border-color:rgba(0,255,136,0.4)}
+button{width:100%;background:#00ff88;color:#000;border:none;padding:16px;border-radius:10px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;transition:all 0.2s}
+button:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(0,255,136,0.3)}
+button:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.result{margin-top:24px;padding:20px;border-radius:12px;display:none}
+.result.success{background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.2)}
+.result.error{background:rgba(255,68,68,0.08);border:1px solid rgba(255,68,68,0.2)}
+.key-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:10px}
+.key-value{font-size:18px;font-weight:800;font-family:monospace;color:#00ff88;letter-spacing:2px;word-break:break-all;margin-bottom:12px}
+.copy-btn{background:transparent;border:1px solid rgba(0,255,136,0.3);color:#00ff88;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;width:auto;font-family:inherit}
+.back{display:inline-block;color:rgba(255,255,255,0.3);font-size:13px;text-decoration:none;margin-top:24px;transition:color 0.2s}
+.back:hover{color:#fff}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">Go<span>Clip</span></div>
+  <h1>Recover Your License Key</h1>
+  <p>Enter the email address you used when you purchased GoClip and we'll show you your license key.</p>
+  <input type="email" id="emailInput" placeholder="your@email.com" onkeydown="if(event.key==='Enter')lookup()"/>
+  <button onclick="lookup()" id="lookupBtn">Find My Key →</button>
+  <div id="result" class="result">
+    <div id="successContent" style="display:none">
+      <div class="key-label">Your License Key</div>
+      <div class="key-value" id="keyDisplay">—</div>
+      <button class="copy-btn" onclick="copyKey()">Copy Key</button>
+      <p style="margin-top:12px;font-size:13px;color:rgba(255,255,255,0.35)">Enter this key in GoClip Settings → License Key → Validate</p>
+    </div>
+    <div id="errorContent" style="display:none">
+      <p style="color:#ff6060;margin:0">No license found for that email. Make sure you're using the email you purchased with.<br/><br/>Need help? Email <strong style="color:#fff">goclipadmin@gmail.com</strong></p>
+    </div>
+  </div>
+  <a href="https://goclip.io" class="back">← Back to GoClip</a>
+</div>
+
+<script>
+function lookup() {
+  var email = document.getElementById('emailInput').value.trim();
+  var btn = document.getElementById('lookupBtn');
+  var result = document.getElementById('result');
+  
+  if (!email || !email.includes('@')) {
+    alert('Please enter a valid email address.');
+    return;
+  }
+  
+  btn.textContent = 'Looking up...';
+  btn.disabled = true;
+  
+  fetch('https://web-production-d3e13.up.railway.app/admin/check-email?email=' + encodeURIComponent(email))
+    .then(r => r.json())
+    .then(data => {
+      result.style.display = 'block';
+      if (data.licenses && data.licenses.length > 0) {
+        result.className = 'result success';
+        document.getElementById('keyDisplay').textContent = data.licenses[0].key;
+        document.getElementById('successContent').style.display = 'block';
+        document.getElementById('errorContent').style.display = 'none';
+      } else {
+        result.className = 'result error';
+        document.getElementById('successContent').style.display = 'none';
+        document.getElementById('errorContent').style.display = 'block';
+      }
+      btn.textContent = 'Find My Key →';
+      btn.disabled = false;
+    })
+    .catch(() => {
+      result.style.display = 'block';
+      result.className = 'result error';
+      document.getElementById('successContent').style.display = 'none';
+      document.getElementById('errorContent').style.display = 'block';
+      btn.textContent = 'Find My Key →';
+      btn.disabled = false;
+    });
+}
+
+function copyKey() {
+  var key = document.getElementById('keyDisplay').textContent;
+  navigator.clipboard.writeText(key).then(() => {
+    var btn = event.target;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy Key', 2000);
+  });
+}
+</script>
+</body>
+</html>
