@@ -457,7 +457,7 @@ footer{padding:40px 60px;border-top:1px solid var(--b);display:flex;align-items:
         <li>No watermark</li>
         <li class="dim">Priority support</li>
       </ul>
-      <button class="plan-btn primary" onclick="openWaitlist()">Get Pro — $19/mo</button>
+      <button class="plan-btn primary" onclick="startCheckout('pro')">Get Pro — $19/mo</button>
     </div>
     <div class="plan">
       <div class="plan-name">Premium</div>
@@ -471,7 +471,7 @@ footer{padding:40px 60px;border-top:1px solid var(--b);display:flex;align-items:
         <li>No watermark</li>
         <li>Priority support</li>
       </ul>
-      <button class="plan-btn ghost" onclick="openWaitlist()">Get Premium — $39/mo</button>
+      <button class="plan-btn ghost" onclick="startCheckout('premium')">Get Premium — $39/mo</button>
     </div>
   </div>
   <p style="color:rgba(255,255,255,.2);font-size:13px;margin-top:28px">✓ Cancel anytime &nbsp;·&nbsp; ✓ Windows 10/11 &nbsp;·&nbsp; ✓ Works with any public Twitch channel</p>
@@ -679,6 +679,38 @@ function submitWaitlist() {
     emailEl.value=''; btn.textContent='Joined!';
   });
 }
+
+// STRIPE CHECKOUT
+async function startCheckout(plan) {
+  try {
+    const btn = event.target;
+    btn.textContent = 'Loading...';
+    btn.disabled = true;
+    
+    const res = await fetch('https://web-production-d3e13.up.railway.app/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        plan: plan,
+        success_url: 'https://goclip.io/success.html',
+        cancel_url: 'https://goclip.io/#pricing'
+      })
+    });
+    
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      btn.textContent = plan === 'pro' ? 'Get Pro — $19/mo' : 'Get Premium — $39/mo';
+      btn.disabled = false;
+      alert('Something went wrong. Please try again.');
+    }
+  } catch(e) {
+    console.error(e);
+    alert('Something went wrong. Please try again.');
+  }
+}
+
 </script>
 </body>
 </html>
