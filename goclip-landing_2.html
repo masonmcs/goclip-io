@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoClip — AI Clip Bot for Streamers & Clippers</title>
+<meta name="description" content="GoClip watches any Twitch channel, finds the best moments with AI, and posts them to TikTok automatically. Built for streamers and clippers."/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--g:#00ff88;--g2:#00cc6a;--bg:#030303;--s:#0a0a0a;--s2:#111;--b:rgba(255,255,255,0.06)}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:#fff;font-family:'Inter',sans-serif;overflow-x:hidden;cursor:none}
+
+#cur{width:10px;height:10px;background:var(--g);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;mix-blend-mode:screen;transition:transform .15s,width .2s,height .2s}
+#cur2{width:40px;height:40px;border:1px solid var(--g);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;opacity:.4;transition:all .08s linear}
+
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9000;opacity:.4}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:500;padding:18px 60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.04);backdrop-filter:blur(20px);background:rgba(3,3,3,0.8)}
+.logo{font-size:20px;font-weight:900;letter-spacing:-1px}
+.logo em{color:var(--g);font-style:normal}
+.nav-right{display:flex;align-items:center;gap:20px}
+.nav-link{font-size:13px;color:rgba(255,255,255,.45);text-decoration:none;transition:color .2s}
+.nav-link:hover{color:#fff}
+.nav-btn{background:var(--g);color:#000;border:none;padding:10px 22px;border-radius:999px;font-size:13px;font-weight:800;cursor:none;transition:all .2s;letter-spacing:-.2px}
+.nav-btn:hover{box-shadow:0 0 40px rgba(0,255,136,.5);transform:scale(1.05)}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 40px 60px;position:relative;overflow:hidden}
+canvas#c{position:fixed;inset:0;z-index:0;pointer-events:none}
+.hero>*{position:relative;z-index:2}
+
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--g);margin-bottom:36px;opacity:0;animation:up .8s .2s ease forwards}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--g);animation:ping 1.5s infinite}
+@keyframes ping{0%,100%{box-shadow:0 0 0 0 rgba(0,255,136,.8)}50%{box-shadow:0 0 0 6px rgba(0,255,136,0)}}
+
+.hero-h1{font-size:clamp(56px,9vw,120px);font-weight:900;line-height:.95;letter-spacing:-5px;margin-bottom:32px;opacity:0;animation:up .9s .35s ease forwards}
+.hero-h1 .g{color:var(--g);display:inline-block;position:relative}
+.hero-h1 .g::before{content:attr(data-text);position:absolute;left:0;top:0;color:rgba(0,255,136,.15);transform:translate(-3px,2px);filter:blur(4px)}
+.glitch{position:relative;animation:glitch 5s infinite}
+@keyframes glitch{0%,88%,100%{text-shadow:none;transform:none}89%{text-shadow:-3px 0 #f0f,3px 0 #0ff;transform:skewX(-1deg)}91%{text-shadow:3px 0 #f0f,-3px 0 #0ff;transform:skewX(1deg)}93%{text-shadow:none;transform:none}}
+
+.hero-sub{font-size:clamp(16px,2vw,20px);color:rgba(255,255,255,.5);max-width:560px;line-height:1.65;margin-bottom:48px;opacity:0;animation:up .9s .5s ease forwards}
+.hero-sub b{color:#fff;font-weight:600}
+
+.hero-cta{display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:center;opacity:0;animation:up .9s .65s ease forwards}
+.btn-main{display:flex;align-items:center;gap:10px;background:var(--g);color:#000;border:none;padding:18px 42px;border-radius:999px;font-size:17px;font-weight:800;cursor:none;transition:all .2s;letter-spacing:-.3px;position:relative;overflow:hidden;text-decoration:none}
+.btn-main::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);transform:translateX(-100%);transition:transform .5s}
+.btn-main:hover::after{transform:translateX(100%)}
+.btn-main:hover{box-shadow:0 0 60px rgba(0,255,136,.5);transform:translateY(-3px) scale(1.02)}
+.btn-main .arr{transition:transform .2s}
+.btn-main:hover .arr{transform:translateX(4px)}
+.btn-sec{background:transparent;color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.12);padding:18px 32px;border-radius:999px;font-size:15px;font-weight:600;cursor:none;transition:all .2s;text-decoration:none}
+.btn-sec:hover{border-color:rgba(255,255,255,.35);color:#fff}
+@keyframes up{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+
+.trust-row{display:flex;align-items:center;gap:32px;margin-top:52px;opacity:0;animation:up .9s .8s ease forwards;flex-wrap:wrap;justify-content:center}
+.trust-item{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.35);font-weight:500}
+.trust-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.2)}
+
+.live-feed{position:absolute;right:40px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:3}
+.feed-item{background:rgba(10,10,10,.9);border:1px solid var(--b);border-radius:12px;padding:12px 16px;font-size:12px;color:rgba(255,255,255,.6);backdrop-filter:blur(20px);animation:feedIn .4s ease both;white-space:nowrap;border-left:2px solid var(--g)}
+.feed-item strong{color:var(--g);font-weight:700}
+@keyframes feedIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+.marq-wrap{overflow:hidden;border-top:1px solid var(--b);border-bottom:1px solid var(--b);background:var(--s);padding:14px 0}
+.marq{display:flex;gap:48px;animation:marq 22s linear infinite;white-space:nowrap;width:max-content}
+.marq-item{display:flex;align-items:center;gap:12px;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.3)}
+.marq-item .star{color:var(--g);font-size:10px}
+@keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+.bento-section{padding:100px 60px}
+.bento{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--b);border-radius:24px;overflow:hidden}
+.bento-cell{background:var(--s);padding:40px 36px;position:relative;overflow:hidden;transition:background .3s}
+.bento-cell:hover{background:var(--s2)}
+.bento-cell.wide{grid-column:span 2}
+.bento-cell::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--g);transform:scaleX(0);transition:transform .4s;transform-origin:left}
+.bento-cell:hover::after{transform:scaleX(1)}
+.cell-num{font-size:64px;font-weight:900;letter-spacing:-3px;color:var(--g);line-height:1;margin-bottom:8px}
+.cell-label{font-size:14px;color:rgba(255,255,255,.4);line-height:1.5}
+.cell-label b{color:#fff;font-weight:600;display:block;font-size:16px;margin-bottom:4px}
+.vs-badge{display:inline-block;background:rgba(255,50,50,.12);border:1px solid rgba(255,50,50,.2);color:#ff6060;font-size:11px;font-weight:700;padding:4px 12px;border-radius:999px;margin-top:12px;letter-spacing:.5px}
+
+/* TERMINAL */
+.terminal-section{padding:0 60px 100px}
+.terminal-wrap{background:#080810;border:1px solid rgba(0,255,136,0.12);border-radius:20px;overflow:hidden;max-width:820px;margin:0 auto}
+.terminal-bar{background:#0f0f18;padding:14px 20px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.dot{width:12px;height:12px;border-radius:50%}
+.dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
+.terminal-title{font-size:12px;color:rgba(255,255,255,0.3);margin-left:8px;font-family:'DM Mono',monospace}
+.terminal-body{padding:28px 32px;font-family:'DM Mono',monospace;font-size:13px;line-height:2.1}
+.tl{display:flex;gap:12px}
+.tp{color:var(--g);flex-shrink:0;font-weight:500}
+.tok{color:#28c840}.tinfo{color:#4ea8de}.twarn{color:#febc2e}.tmuted{color:rgba(255,255,255,0.35)}.tbright{color:#fff}
+
+.process-section{padding:100px 60px}
+.section-tag{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--g);margin-bottom:16px}
+.section-h{font-size:clamp(40px,6vw,72px);font-weight:900;letter-spacing:-3px;line-height:1;margin-bottom:80px}
+.process-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--b);border-radius:24px;overflow:hidden}
+.proc-card{background:var(--s);padding:56px 40px;transition:all .3s;position:relative}
+.proc-card:hover{background:var(--s2)}
+.proc-num{font-size:100px;font-weight:900;letter-spacing:-5px;color:rgba(0,255,136,.06);line-height:1;position:absolute;top:20px;right:24px;transition:color .3s}
+.proc-card:hover .proc-num{color:rgba(0,255,136,.12)}
+.proc-icon{width:60px;height:60px;background:rgba(0,255,136,.08);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:28px;transition:background .3s}
+.proc-card:hover .proc-icon{background:rgba(0,255,136,.18)}
+.proc-h{font-size:24px;font-weight:800;margin-bottom:12px;letter-spacing:-.5px}
+.proc-p{font-size:15px;color:rgba(255,255,255,.45);line-height:1.7}
+
+.comp-section{padding:100px 60px}
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--b);border-radius:24px;overflow:hidden;max-width:800px;margin:60px auto 0}
+.comp-col{background:var(--s);padding:40px}
+.comp-col.them{opacity:.5}
+.comp-header{font-size:14px;font-weight:700;margin-bottom:28px;display:flex;align-items:center;gap:10px}
+.comp-badge{font-size:10px;padding:3px 10px;border-radius:999px;font-weight:700;letter-spacing:1px}
+.badge-us{background:rgba(0,255,136,.15);color:var(--g)}
+.badge-them{background:rgba(255,255,255,.06);color:rgba(255,255,255,.4)}
+.comp-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--b);font-size:14px;color:rgba(255,255,255,.7)}
+.comp-item:last-child{border:none}
+.ci{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.ci-yes{background:rgba(0,255,136,.12);color:var(--g)}
+.ci-no{background:rgba(255,255,255,.05);color:rgba(255,255,255,.2)}
+
+/* PRICING */
+.pricing-section{padding:100px 60px;text-align:center}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--b);border-radius:24px;overflow:hidden;max-width:960px;margin:60px auto 0}
+.plan{background:var(--s);padding:44px 36px;position:relative;transition:background .3s;text-align:left}
+.plan:hover{background:var(--s2)}
+.plan.featured{background:#070f0a;position:relative}
+.plan.featured::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--g)}
+.plan-badge{position:absolute;top:20px;right:20px;background:var(--g);color:#000;font-size:10px;font-weight:800;padding:4px 12px;border-radius:999px;letter-spacing:1px}
+.plan-name{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:20px}
+.plan-price{font-size:56px;font-weight:900;letter-spacing:-3px;line-height:1;margin-bottom:4px}
+.plan-price span{font-size:18px;font-weight:500;color:rgba(255,255,255,.3);letter-spacing:0}
+.plan-desc{font-size:14px;color:rgba(255,255,255,.4);margin:16px 0 28px;padding-bottom:28px;border-bottom:1px solid var(--b);line-height:1.6}
+.plan-features{list-style:none;margin-bottom:36px}
+.plan-features li{font-size:14px;color:rgba(255,255,255,.6);padding:8px 0;display:flex;align-items:flex-start;gap:10px;border-bottom:1px solid rgba(255,255,255,0.04)}
+.plan-features li:last-child{border:none}
+.plan-features li::before{content:"✓";color:var(--g);font-weight:700;font-size:12px;flex-shrink:0;margin-top:2px}
+.plan-features li.dim{opacity:.3}
+.plan-features li.dim::before{content:"✗";color:rgba(255,255,255,.3)}
+.plan-btn{display:block;text-align:center;padding:15px;border-radius:999px;font-weight:800;font-size:15px;text-decoration:none;transition:all .2s;font-family:inherit;letter-spacing:-.2px;cursor:none;border:none;width:100%}
+.plan-btn.primary{background:var(--g);color:#000}
+.plan-btn.primary:hover{box-shadow:0 0 40px rgba(0,255,136,.4);transform:translateY(-2px)}
+.plan-btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6)}
+.plan-btn.ghost:hover{border-color:rgba(255,255,255,.3);color:#fff}
+
+.faq-section{padding:100px 60px}
+.faq-list{max-width:720px;margin:60px auto 0}
+.faq-item{border-bottom:1px solid var(--b);padding:28px 0;cursor:none}
+.faq-q{font-size:17px;font-weight:700;margin-bottom:0;letter-spacing:-.3px;display:flex;justify-content:space-between;align-items:center;color:#fff}
+.faq-icon{color:var(--g);font-size:20px;font-weight:300;flex-shrink:0;margin-left:20px;transition:transform .3s}
+.faq-a{color:rgba(255,255,255,.45);font-size:15px;line-height:1.8;max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s}
+.faq-item.open .faq-a{max-height:200px;padding-top:16px}
+.faq-item.open .faq-icon{transform:rotate(45deg)}
+
+.final-section{margin:60px;border-radius:28px;overflow:hidden;position:relative}
+.final-bg{background:var(--g);padding:100px 60px;text-align:center;position:relative}
+.final-bg::before{content:'GOCLIP';position:absolute;font-size:240px;font-weight:900;color:rgba(0,0,0,.07);top:50%;left:50%;transform:translate(-50%,-50%);letter-spacing:-12px;pointer-events:none;white-space:nowrap}
+.final-h{font-size:clamp(40px,7vw,88px);font-weight:900;color:#000;letter-spacing:-4px;line-height:.95;margin-bottom:20px}
+.final-sub{font-size:18px;color:rgba(0,0,0,.5);margin-bottom:40px;max-width:480px;margin-left:auto;margin-right:auto}
+.btn-black{background:#000;color:#fff;border:none;padding:20px 56px;border-radius:999px;font-size:18px;font-weight:800;cursor:none;transition:all .2s;letter-spacing:-.3px;text-decoration:none;display:inline-block}
+.btn-black:hover{transform:scale(1.05);box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.final-note{font-size:13px;color:rgba(0,0,0,.35);margin-top:16px}
+
+footer{padding:40px 60px;border-top:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.foot-logo{font-size:20px;font-weight:900;letter-spacing:-1px}
+.foot-logo em{color:var(--g);font-style:normal}
+.foot-links{display:flex;gap:24px;list-style:none}
+.foot-links a{color:rgba(255,255,255,.3);font-size:13px;text-decoration:none;transition:color .2s}
+.foot-links a:hover{color:#fff}
+.foot-copy{font-size:13px;color:rgba(255,255,255,.2)}
+
+.r{opacity:0;transform:translateY(50px);transition:opacity .8s ease,transform .8s ease}
+.r.in{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+<div id="cur"></div>
+<div id="cur2"></div>
+
+<nav>
+  <div class="logo">Go<em>Clip</em></div>
+  <div class="nav-right">
+    <a class="nav-link" href="#how">How it works</a>
+    <a class="nav-link" href="#pricing">Pricing</a>
+    <a class="nav-link" href="#faq">FAQ</a>
+    <a href="#pricing" class="nav-btn">Start Free</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="eyebrow"><div class="live-dot"></div>AI Clip Bot — Live Now</div>
+  <h1 class="hero-h1">
+    <div class="glitch">Your stream.</div>
+    <div><span class="g" data-text="Clipped.">Clipped.</span></div>
+    <div>Going viral.</div>
+  </h1>
+  <p class="hero-sub">GoClip monitors <b>any Twitch channel</b>, finds the best moments with AI, renders vertical clips, and posts to TikTok automatically — whether it's your stream or your favorite streamer's.</p>
+  <div class="hero-cta">
+    <a href="#pricing" class="btn-main">Start for Free <span class="arr">→</span></a>
+    <a href="#how" class="btn-sec">See how it works</a>
+  </div>
+  <div class="trust-row">
+    <div class="trust-item">✓ Works on any Twitch channel</div>
+    <div class="trust-dot"></div>
+    <div class="trust-item">✓ No editing required</div>
+    <div class="trust-dot"></div>
+    <div class="trust-item">✓ Cancel anytime</div>
+    <div class="trust-dot"></div>
+    <div class="trust-item">✓ Windows 10/11</div>
+  </div>
+  <div class="live-feed" id="feed"></div>
+</section>
+
+<div class="marq-wrap">
+  <div class="marq" id="marq">
+    <div class="marq-item"><span class="star">✦</span>AI-powered clips</div>
+    <div class="marq-item"><span class="star">✦</span>Any Twitch channel</div>
+    <div class="marq-item"><span class="star">✦</span>Zero editing</div>
+    <div class="marq-item"><span class="star">✦</span>Auto captions</div>
+    <div class="marq-item"><span class="star">✦</span>TikTok autoposter</div>
+    <div class="marq-item"><span class="star">✦</span>Works while you sleep</div>
+    <div class="marq-item"><span class="star">✦</span>For streamers & clippers</div>
+    <div class="marq-item"><span class="star">✦</span>Start free today</div>
+    <div class="marq-item"><span class="star">✦</span>AI-powered clips</div>
+    <div class="marq-item"><span class="star">✦</span>Any Twitch channel</div>
+    <div class="marq-item"><span class="star">✦</span>Zero editing</div>
+    <div class="marq-item"><span class="star">✦</span>Auto captions</div>
+    <div class="marq-item"><span class="star">✦</span>TikTok autoposter</div>
+    <div class="marq-item"><span class="star">✦</span>Works while you sleep</div>
+    <div class="marq-item"><span class="star">✦</span>For streamers & clippers</div>
+    <div class="marq-item"><span class="star">✦</span>Start free today</div>
+  </div>
+</div>
+
+<!-- BENTO STATS -->
+<section class="bento-section r">
+  <div class="bento">
+    <div class="bento-cell wide">
+      <div class="cell-num" data-cnt="100">0</div>
+      <div class="cell-label"><b>% Automated</b>From VOD detection to TikTok post. GoClip handles the entire pipeline without you touching anything.</div>
+    </div>
+    <div class="bento-cell">
+      <div class="cell-num" data-cnt="0">0</div>
+      <div class="cell-label"><b>Minutes editing</b>You do zero. GoClip does everything.</div>
+    </div>
+    <div class="bento-cell">
+      <div class="cell-num" data-cnt="24">0</div>
+      <div class="cell-label"><b>Hours automated</b>GoClip never stops working.</div>
+    </div>
+    <div class="bento-cell">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <div style="width:10px;height:10px;border-radius:50%;background:var(--g);animation:ping 1.5s infinite;flex-shrink:0"></div>
+        <div style="font-size:11px;font-weight:700;color:var(--g);letter-spacing:2px;text-transform:uppercase">AI Quality Score</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;color:rgba(255,255,255,.5)">Hype moment</span><span style="font-size:12px;color:var(--g);font-weight:700">9/10</span></div>
+          <div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px"><div style="width:90%;height:100%;background:var(--g);border-radius:2px"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;color:rgba(255,255,255,.5)">Funny reaction</span><span style="font-size:12px;color:var(--g);font-weight:700">8/10</span></div>
+          <div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px"><div style="width:80%;height:100%;background:var(--g);border-radius:2px"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;color:rgba(255,255,255,.5)">Clutch play</span><span style="font-size:12px;color:var(--g);font-weight:700">9/10</span></div>
+          <div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px"><div style="width:90%;height:100%;background:var(--g);border-radius:2px"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;color:rgba(255,255,255,.5)">Dead air</span><span style="font-size:12px;color:#ff6060;font-weight:700">2/10</span></div>
+          <div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px"><div style="width:20%;height:100%;background:#ff6060;border-radius:2px"></div></div>
+        </div>
+      </div>
+      <div style="margin-top:16px;font-size:12px;color:rgba(255,255,255,.25)">Claude AI scores every moment. Only the best get clipped.</div>
+    </div>
+    <div class="bento-cell">
+      <div class="cell-num" style="font-size:42px;color:#fff">$0</div>
+      <div class="cell-label"><b>To get started</b>Free tier included. Try GoClip on real VODs before you spend a cent.</div>
+      <div class="vs-badge">No credit card required</div>
+    </div>
+    <div class="bento-cell">
+      <div class="cell-num" data-cnt="6">0</div>
+      <div class="cell-label"><b>Hours between checks</b>GoClip scans for new VODs automatically. The moment a stream ends, GoClip is already clipping.</div>
+    </div>
+    <div class="bento-cell">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+        <div style="width:36px;height:36px;border-radius:50%;background:rgba(0,255,136,.1);display:flex;align-items:center;justify-content:center;font-size:18px">⚡</div>
+        <div style="font-size:13px;font-weight:700;color:var(--g);letter-spacing:1px;text-transform:uppercase">Up in minutes</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--g);color:#000;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.6)">Download & install GoClip</div>
+        </div>
+        <div style="width:1px;height:12px;background:var(--b);margin-left:11px"></div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--g);color:#000;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.6)">Add Twitch channel & TikTok</div>
+        </div>
+        <div style="width:1px;height:12px;background:var(--b);margin-left:11px"></div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--g);color:#000;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.6)">Hit Start. Walk away.</div>
+        </div>
+      </div>
+      <div style="margin-top:20px;font-size:12px;color:rgba(255,255,255,.25);border-top:1px solid var(--b);padding-top:14px">GoClip handles everything else.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TERMINAL -->
+<section class="terminal-section r">
+  <div class="terminal-wrap">
+    <div class="terminal-bar">
+      <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+      <span class="terminal-title">GoClip — Live Activity Feed</span>
+    </div>
+    <div class="terminal-body">
+      <div class="tl"><span class="tp">●</span><span class="tinfo">Fetching most recent VOD for: jynxzi</span></div>
+      <div class="tl"><span class="tp">●</span><span class="tok">New VOD detected (v2748097299) — starting download</span></div>
+      <div class="tl"><span class="tp">●</span><span class="tmuted">Downloading chunk 1/2 (0:00 → 15:00)...</span></div>
+      <div class="tl"><span class="tp">●</span><span class="tbright">Chunk downloaded (351.6 MB) — transcribing now</span></div>
+      <div class="tl"><span class="tp">●</span><span class="tinfo">Sending transcript to Claude AI for scoring...</span></div>
+      <div class="tl"><span class="tp">●</span><span class="tok">Found 3 clips scoring 8+/10 in chunk 1</span></div>
+      <div class="tl"><span class="tp">●</span><span class="tmuted">Rendering clip v2748097299_clip01 (score 9/10)...</span></div>
+      <div class="tl"><span class="tp">●</span><span class="tok">✓ Clip rendered: jynxzi_clip01_final.mp4</span></div>
+      <div class="tl"><span class="tp">●</span><span class="twarn">Scheduled post time — posting to TikTok now...</span></div>
+      <div class="tl"><span class="tp">●</span><span class="tok">✓ Posted! Next content check in 60 minutes.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="process-section r" id="how">
+  <div class="section-tag">How it works</div>
+  <div class="section-h">Three steps.<br>Infinite clips.</div>
+  <div class="process-grid">
+    <div class="proc-card">
+      <div class="proc-num">01</div>
+      <div class="proc-icon">📺</div>
+      <div class="proc-h">Pick any channel</div>
+      <p class="proc-p">Enter any public Twitch channel name. GoClip monitors it around the clock and grabs new VODs automatically the moment a stream ends.</p>
+    </div>
+    <div class="proc-card">
+      <div class="proc-num">02</div>
+      <div class="proc-icon">🧠</div>
+      <div class="proc-h">AI finds the gold</div>
+      <p class="proc-p">Claude AI transcribes the full VOD and scores every moment — funny, hype, clutch, fail. Only the best clips make the cut. You set the quality bar.</p>
+    </div>
+    <div class="proc-card">
+      <div class="proc-num">03</div>
+      <div class="proc-icon">🚀</div>
+      <div class="proc-h">TikTok does the rest</div>
+      <p class="proc-p">Clips are cropped to 9:16 vertical, captions burned in, and posted to TikTok on your schedule. Fully automated. Zero touches from you.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="comp-section r">
+  <div class="section-tag">The comparison</div>
+  <div class="section-h">Why GoClip<br>wins every time.</div>
+  <div class="comp-grid">
+    <div class="comp-col">
+      <div class="comp-header">Go<em style="color:var(--g);font-style:normal">Clip</em> <span class="comp-badge badge-us">YOU</span></div>
+      <div class="comp-item"><div class="ci ci-yes">✓</div>Works for any Twitch channel</div>
+      <div class="comp-item"><div class="ci ci-yes">✓</div>AI picks the best moments</div>
+      <div class="comp-item"><div class="ci ci-yes">✓</div>Auto captions & 9:16 crop</div>
+      <div class="comp-item"><div class="ci ci-yes">✓</div>TikTok autoposter</div>
+      <div class="comp-item"><div class="ci ci-yes">✓</div>Free tier to start</div>
+      <div class="comp-item"><div class="ci ci-yes">✓</div>Runs 24/7 while you sleep</div>
+      <div class="comp-item"><div class="ci ci-yes">✓</div>Built for streamers & clippers</div>
+    </div>
+    <div class="comp-col them">
+      <div class="comp-header" style="color:rgba(255,255,255,.3)">Doing it manually <span class="comp-badge badge-them">THEM</span></div>
+      <div class="comp-item"><div class="ci ci-no">✗</div>Only your own channel</div>
+      <div class="comp-item"><div class="ci ci-no">✗</div>You rewatch hours of VODs</div>
+      <div class="comp-item"><div class="ci ci-no">✗</div>Captions done by hand</div>
+      <div class="comp-item"><div class="ci ci-no">✗</div>Manual uploads every time</div>
+      <div class="comp-item"><div class="ci ci-no">✗</div>$57/mo on Opus Clip</div>
+      <div class="comp-item"><div class="ci ci-no">✗</div>Hours of your time daily</div>
+      <div class="comp-item"><div class="ci ci-no">✗</div>Inconsistent posting</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section r" id="pricing">
+  <div class="section-tag">Pricing</div>
+  <div class="section-h">Start free.<br>Scale when ready.</div>
+  <p style="color:rgba(255,255,255,.4);font-size:17px;max-width:480px;margin:0 auto">No credit card required to start. Upgrade or cancel anytime.</p>
+  <div class="pricing-grid">
+    <div class="plan">
+      <div class="plan-name">Free</div>
+      <div class="plan-price">$0<span>/mo</span></div>
+      <div class="plan-desc">Try GoClip on real VODs. See what AI clipping actually looks like before spending a cent.</div>
+      <ul class="plan-features">
+        <li>3 clips per week</li>
+        <li>AI clip scoring</li>
+        <li>Vertical 9:16 rendering</li>
+        <li>TikTok auto-post</li>
+        <li class="dim">GoClip watermark</li>
+        <li class="dim">Priority support</li>
+      </ul>
+      <button class="plan-btn ghost">Download Free</button>
+    </div>
+    <div class="plan featured">
+      <div class="plan-badge">POPULAR</div>
+      <div class="plan-name">Pro</div>
+      <div class="plan-price">$19<span>/mo</span></div>
+      <div class="plan-desc">For active clippers who post consistently and want their brand on every clip.</div>
+      <ul class="plan-features">
+        <li>10 clips per week</li>
+        <li>AI clip scoring</li>
+        <li>Vertical 9:16 rendering</li>
+        <li>TikTok auto-post</li>
+        <li>No watermark</li>
+        <li class="dim">Priority support</li>
+      </ul>
+      <button class="plan-btn primary">Get Pro — $19/mo</button>
+    </div>
+    <div class="plan">
+      <div class="plan-name">Premium</div>
+      <div class="plan-price">$39<span>/mo</span></div>
+      <div class="plan-desc">For streamers and serious clippers who want unlimited clips and the full GoClip experience.</div>
+      <ul class="plan-features">
+        <li>Unlimited clips per week</li>
+        <li>Multiple Twitch channels</li>
+        <li>30-min VOD check interval</li>
+        <li>Caption customization</li>
+        <li>No watermark</li>
+        <li>Priority support</li>
+      </ul>
+      <button class="plan-btn ghost">Get Premium — $39/mo</button>
+    </div>
+  </div>
+  <p style="color:rgba(255,255,255,.2);font-size:13px;margin-top:28px">✓ Cancel anytime &nbsp;·&nbsp; ✓ Windows 10/11 &nbsp;·&nbsp; ✓ Works with any public Twitch channel</p>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section r" id="faq">
+  <div class="section-tag">FAQ</div>
+  <div class="section-h">Questions<br>answered.</div>
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-q">Can I use GoClip for someone else's channel? <span class="faq-icon">+</span></div>
+      <div class="faq-a">Yes — GoClip works with any public Twitch channel. Streamers can clip their own VODs, and clippers can run it on their favorite streamer's channel. Just enter the channel name and you're good to go.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How does the AI decide which clips to keep? <span class="faq-icon">+</span></div>
+      <div class="faq-a">GoClip transcribes the VOD using Whisper, then sends the full transcript to Claude AI. Claude scores each moment based on humor, hype, reactions, and viral potential. You set the minimum quality score — only clips that hit your threshold get rendered.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Do I need to keep my PC on? <span class="faq-icon">+</span></div>
+      <div class="faq-a">Yes — GoClip is a Windows desktop app. Keep it running and it handles everything automatically. You can minimize it to the taskbar and forget about it.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What does the watermark on the free tier look like? <span class="faq-icon">+</span></div>
+      <div class="faq-a">Free tier clips include a small GoClip watermark on the video. It's removed completely on Pro and Premium plans. Upgrading also removes the 3 clip/week limit.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What do I need to run GoClip? <span class="faq-icon">+</span></div>
+      <div class="faq-a">Windows 10 or 11, an internet connection, and a TikTok account. Everything else — Python, ffmpeg, Whisper AI — is bundled inside the installer. No technical setup required.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can I cancel my subscription anytime? <span class="faq-icon">+</span></div>
+      <div class="faq-a">Yes. Cancel anytime from your account with no fees or penalties. If you cancel, you keep access until the end of your billing period.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<div class="final-section r">
+  <div class="final-bg">
+    <h2 class="final-h">Your clips aren't<br>posting themselves.</h2>
+    <p class="final-sub">Every stream without GoClip is content that disappears. Start free today — no credit card needed.</p>
+    <a href="#pricing" class="btn-black">Start for Free →</a>
+    <div class="final-note">Free tier available. Pro from $19/mo. Premium from $39/mo.</div>
+  </div>
+</div>
+
+<footer>
+  <div class="foot-logo">Go<em>Clip</em></div>
+  <ul class="foot-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="mailto:support@goclip.io">Support</a></li>
+  </ul>
+  <div class="foot-copy">© 2026 GoClip. Built for streamers & clippers.</div>
+</footer>
+
+<script>
+const cur=document.getElementById('cur'),cur2=document.getElementById('cur2');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx-5+'px';cur.style.top=my-5+'px';});
+(function ac(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;cur2.style.left=rx-20+'px';cur2.style.top=ry-20+'px';requestAnimationFrame(ac);})();
+document.querySelectorAll('button,a,.faq-item').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.transform='scale(2.5)';cur2.style.transform='scale(1.6)';cur2.style.opacity='.2';});
+  el.addEventListener('mouseleave',()=>{cur.style.transform='';cur2.style.transform='';cur2.style.opacity='.4';});
+});
+
+// CANVAS GRID
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+let W=canvas.width=window.innerWidth,H=canvas.height=window.innerHeight;
+window.addEventListener('resize',()=>{W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;});
+const COLS=14,ROWS=9;let t=0;
+function drawGrid(){
+  ctx.clearRect(0,0,W,H);
+  const cw=W/COLS,ch=H/ROWS;
+  for(let i=0;i<=COLS;i++){
+    const x=i*cw,alpha=0.03+0.018*Math.sin(t*.5+i*.4);
+    ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);
+    ctx.strokeStyle=`rgba(0,255,136,${alpha})`;ctx.lineWidth=.5;ctx.stroke();
+  }
+  for(let j=0;j<=ROWS;j++){
+    const y=j*ch,alpha=0.03+0.018*Math.sin(t*.4+j*.5);
+    ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);
+    ctx.strokeStyle=`rgba(0,255,136,${alpha})`;ctx.lineWidth=.5;ctx.stroke();
+  }
+  for(let i=0;i<=COLS;i++){for(let j=0;j<=ROWS;j++){
+    const x=i*cw,y=j*ch,pulse=Math.sin(t*.8+i*.3+j*.4);
+    if(pulse>.7){ctx.beginPath();ctx.arc(x,y,1.5,0,Math.PI*2);ctx.fillStyle=`rgba(0,255,136,${(pulse-.7)*1.5})`;ctx.fill();}
+  }}
+  const grad=ctx.createRadialGradient(mx,my,0,mx,my,320);
+  grad.addColorStop(0,'rgba(0,255,136,0.05)');grad.addColorStop(1,'transparent');
+  ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+  t+=.016;requestAnimationFrame(drawGrid);
+}
+drawGrid();
+
+// LIVE FEED
+const feeds=[
+  ['🎮','Clip posted','jynxzi — clutch 1v4 #fyp'],
+  ['🔥','Going viral','18.4K views in 3 hours'],
+  ['✂️','New clip found','AI scored 9/10 — rendering'],
+  ['📈','Follower spike','+1.2K followers overnight'],
+  ['🚀','Clip posted','xqc reaction moment #gaming'],
+  ['⚡','VOD detected','New stream ended — processing'],
+  ['💥','On FYP','Clip hit For You page'],
+  ['🎯','Clip scored','8/10 — funny moment queued'],
+];
+let fi=0;const feedEl=document.getElementById('feed');
+function addFeed(){
+  if(feedEl.children.length>4)feedEl.removeChild(feedEl.firstChild);
+  const f=feeds[fi%feeds.length];
+  const d=document.createElement('div');d.className='feed-item';
+  d.innerHTML=`${f[0]} <strong>${f[1]}</strong> — ${f[2]}`;
+  feedEl.appendChild(d);fi++;
+  setTimeout(addFeed,2600+Math.random()*1400);
+}
+setTimeout(addFeed,1200);
+
+// SCROLL REVEAL
+const rs=document.querySelectorAll('.r');
+const ob=new IntersectionObserver(ents=>{ents.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.08});
+rs.forEach(r=>ob.observe(r));
+
+// COUNTERS
+function cnt(el,target,dur){
+  if(target===0){el.textContent='0';return;}
+  let s=0,step=target/(dur/16);
+  const ti=setInterval(()=>{s+=step;if(s>=target){el.textContent=target;clearInterval(ti);return;}el.textContent=Math.floor(s);},16);
+}
+const cob=new IntersectionObserver(ents=>{
+  ents.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('[data-cnt]').forEach(el=>cnt(el,+el.dataset.cnt,1600));cob.unobserve(e.target);}});
+},{threshold:.2});
+document.querySelectorAll('.bento-section').forEach(s=>cob.observe(s));
+
+// FAQ ACCORDION
+document.querySelectorAll('.faq-item').forEach(item=>{
+  item.querySelector('.faq-q').addEventListener('click',()=>{
+    const isOpen=item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+    if(!isOpen)item.classList.add('open');
+  });
+});
+</script>
+</body>
+</html>
