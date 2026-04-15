@@ -712,6 +712,70 @@ async function startCheckout(plan) {
   }
 }
 
+
+function openFreeModal() {
+  var m = document.getElementById('freeModal')
+  if (!m) return
+  m.style.display = 'flex'
+  document.getElementById('freeStep1').style.display = 'block'
+  document.getElementById('freeStep2').style.display = 'none'
+  document.getElementById('freeEmail').value = ''
+  document.getElementById('freeError').style.display = 'none'
+  setTimeout(function() { document.getElementById('freeEmail').focus() }, 100)
+}
+function closeFreeModal() {
+  var m = document.getElementById('freeModal')
+  if (m) m.style.display = 'none'
+}
+document.addEventListener('click', function(e) {
+  if (e.target && e.target.id === 'freeModal') closeFreeModal()
+})
+function getFreeKey() {
+  var email = document.getElementById('freeEmail').value.trim()
+  var btn = document.getElementById('freeBtn')
+  var err = document.getElementById('freeError')
+  if (!email || !email.includes('@')) {
+    err.style.display = 'block'
+    err.textContent = 'Please enter a valid email address.'
+    return
+  }
+  btn.textContent = 'Generating key...'
+  btn.disabled = true
+  err.style.display = 'none'
+  fetch('https://web-production-d3e13.up.railway.app/register-free', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email })
+  })
+  .then(function(r) { return r.json() })
+  .then(function(data) {
+    if (data.license_key) {
+      document.getElementById('freeKeyDisplay').textContent = data.license_key
+      document.getElementById('freeStep1').style.display = 'none'
+      document.getElementById('freeStep2').style.display = 'block'
+    } else {
+      err.style.display = 'block'
+      err.textContent = data.detail || data.message || 'Something went wrong. Try again.'
+      btn.textContent = 'Get My Free Key →'
+      btn.disabled = false
+    }
+  })
+  .catch(function() {
+    err.style.display = 'block'
+    err.textContent = 'Something went wrong. Please try again.'
+    btn.textContent = 'Get My Free Key →'
+    btn.disabled = false
+  })
+}
+function copyFreeKey() {
+  var key = document.getElementById('freeKeyDisplay').textContent
+  navigator.clipboard.writeText(key).then(function() {
+    var btn = document.getElementById('copyFreeBtn')
+    btn.textContent = 'Copied!'
+    setTimeout(function() { btn.textContent = 'Copy Key' }, 2000)
+  })
+}
+
 </script>
 
 <!-- FREE KEY MODAL -->
