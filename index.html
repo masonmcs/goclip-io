@@ -443,7 +443,7 @@ footer{padding:40px 60px;border-top:1px solid var(--b);display:flex;align-items:
         <li class="dim">GoClip watermark</li>
         <li class="dim">Priority support</li>
       </ul>
-      <button class="plan-btn ghost" onclick="openWaitlist()">Download Free</button>
+      <button class="plan-btn ghost" onclick="openFreeModal()">Download Free</button>
     </div>
     <div class="plan featured">
       <div class="plan-badge">POPULAR</div>
@@ -713,5 +713,40 @@ async function startCheckout(plan) {
 }
 
 </script>
+
+<!-- FREE KEY MODAL -->
+<div id="freeModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:8000;align-items:center;justify-content:center;backdrop-filter:blur(10px)">
+  <div style="background:#0a0a0f;border:1px solid rgba(0,255,136,0.2);border-radius:24px;padding:52px 44px;max-width:480px;width:90%;position:relative;text-align:center">
+    <button onclick="closeFreeModal()" style="position:absolute;top:16px;right:20px;background:none;border:none;color:rgba(255,255,255,0.3);font-size:24px;cursor:pointer;line-height:1">×</button>
+    
+    <div id="freeStep1">
+      <div style="font-size:40px;margin-bottom:20px">🎮</div>
+      <h2 style="font-size:26px;font-weight:900;letter-spacing:-1px;margin-bottom:10px">Get GoClip Free</h2>
+      <p style="color:rgba(255,255,255,0.45);font-size:14px;line-height:1.7;margin-bottom:28px">Enter your email to get your free license key. Includes 3 clips/week with GoClip watermark.</p>
+      <input type="email" id="freeEmail" placeholder="your@email.com" 
+        style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:14px 16px;color:#fff;font-size:15px;font-family:inherit;outline:none;margin-bottom:12px;transition:border-color 0.2s"
+        onfocus="this.style.borderColor='rgba(0,255,136,0.4)'" 
+        onblur="this.style.borderColor='rgba(255,255,255,0.1)'"
+        onkeydown="if(event.key==='Enter')getFreeKey()"/>
+      <button onclick="getFreeKey()" id="freeBtn" style="width:100%;background:#00ff88;color:#000;border:none;padding:14px;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;transition:all 0.2s">Get My Free Key →</button>
+      <div id="freeError" style="display:none;margin-top:12px;font-size:13px;color:#ff4444;"></div>
+      <p style="color:rgba(255,255,255,0.2);font-size:12px;margin-top:16px">Your email is used to tie your license key to your account. No spam.</p>
+    </div>
+
+    <div id="freeStep2" style="display:none">
+      <div style="font-size:40px;margin-bottom:20px">🎉</div>
+      <h2 style="font-size:26px;font-weight:900;letter-spacing:-1px;margin-bottom:10px">You're in!</h2>
+      <p style="color:rgba(255,255,255,0.45);font-size:14px;line-height:1.7;margin-bottom:24px">Here's your free license key. Enter it in the GoClip setup wizard to get started.</p>
+      <div style="background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.2);border-radius:12px;padding:20px;margin-bottom:20px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:10px">Your License Key</div>
+        <div id="freeKeyDisplay" style="font-size:18px;font-weight:800;font-family:monospace;color:#00ff88;letter-spacing:2px;word-break:break-all;margin-bottom:12px">—</div>
+        <button onclick="copyFreeKey()" id="copyFreeBtn" style="background:transparent;border:1px solid rgba(0,255,136,0.3);color:#00ff88;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Copy Key</button>
+      </div>
+      <p style="color:rgba(255,255,255,0.35);font-size:13px;margin-bottom:20px">Lost your key? Recover it anytime at <a href="/recover.html" style="color:#00ff88">goclip.io/recover.html</a></p>
+      <a href="#" onclick="closeFreeModal();return false;" style="display:block;background:rgba(255,255,255,0.06);color:#fff;border:1px solid rgba(255,255,255,0.1);padding:12px;border-radius:10px;text-decoration:none;font-weight:700;font-size:14px">Close</a>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
