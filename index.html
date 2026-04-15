@@ -595,5 +595,52 @@ document.querySelectorAll('.faq-item').forEach(item=>{
   </div>
 </div>
 
+
+<script>
+function openWaitlist() {
+  var m = document.getElementById('waitlistModal');
+  if (m) { m.style.display = 'flex'; }
+  setTimeout(function() { var el = document.getElementById('waitlistEmail'); if (el) el.focus(); }, 100);
+}
+function closeWaitlist() {
+  var m = document.getElementById('waitlistModal');
+  if (m) m.style.display = 'none';
+}
+document.addEventListener('click', function(e) {
+  if (e.target.id === 'waitlistModal') closeWaitlist();
+});
+function submitWaitlist() {
+  var emailEl = document.getElementById('waitlistEmail');
+  var msg = document.getElementById('waitlistMsg');
+  var btn = document.getElementById('waitlistBtn');
+  if (!emailEl) return;
+  var email = emailEl.value.trim();
+  if (!email || !email.includes('@')) {
+    msg.style.display='block';msg.style.background='rgba(255,68,68,0.1)';msg.style.color='#ff4444';
+    msg.textContent='Please enter a valid email.'; return;
+  }
+  btn.textContent='Joining...'; btn.disabled=true;
+  fetch('https://formspree.io/f/xqewavny', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body:JSON.stringify({email:email})
+  }).then(function(r) {
+    msg.style.display='block';
+    if (r.ok) {
+      msg.style.background='rgba(0,255,136,0.1)';msg.style.color='#00ff88';
+      msg.textContent="You're on the list! We'll email you when GoClip launches.";
+      emailEl.value=''; btn.textContent='Joined!';
+    } else {
+      msg.style.background='rgba(255,68,68,0.1)';msg.style.color='#ff4444';
+      msg.textContent='Something went wrong. Try again.';
+      btn.textContent='Join →'; btn.disabled=false;
+    }
+  }).catch(function() {
+    msg.style.display='block';msg.style.background='rgba(0,255,136,0.1)';msg.style.color='#00ff88';
+    msg.textContent="You're on the list! We'll email you when GoClip launches.";
+    emailEl.value=''; btn.textContent='Joined!';
+  });
+}
+</script>
 </body>
 </html>
