@@ -187,6 +187,15 @@ footer{padding:40px 60px;border-top:1px solid var(--b);display:flex;align-items:
   .section-h{letter-spacing:-2px}
 }
 </style>
+
+<!-- PostHog Analytics -->
+<script>
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias set_config".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+  posthog.init('phc_AEiyFdgGqypPY9yi2ZpTafLwiwrK96Z5fWWG4abc8LzX', {
+    api_host: 'https://us.i.posthog.com',
+    defaults: '2026-01-30'
+  });
+</script>
 </head>
 <body>
 <canvas id="c"></canvas>
@@ -200,7 +209,7 @@ footer{padding:40px 60px;border-top:1px solid var(--b);display:flex;align-items:
     <a class="nav-link" href="#pricing">Pricing</a>
     <a class="nav-link" href="#faq">FAQ</a>
     <a class="nav-link" href="/recover.html">Recover Key</a>
-    <a href="https://github.com/masonmcs/goclip-releases/releases/download/v1.0.0/GoClip.Setup.1.0.0.exe" class="nav-btn">Download GoClip</a>
+    <a href="https://github.com/masonmcs/goclip-releases/releases/download/v1.0.0/GoClip.Setup.1.0.0.exe" class="nav-btn" onclick="posthog.capture('download_clicked',{location:'nav'})">Download GoClip</a>
   </div>
 </nav>
 
@@ -213,7 +222,7 @@ footer{padding:40px 60px;border-top:1px solid var(--b);display:flex;align-items:
   </h1>
   <p class="hero-sub">GoClip monitors <b>any Twitch channel</b>, finds the best moments with AI, renders vertical clips, and posts to TikTok automatically — whether it's your stream or your favorite streamer's.</p>
   <div class="hero-cta">
-    <a href="https://github.com/masonmcs/goclip-releases/releases/download/v1.0.0/GoClip.Setup.1.0.0.exe" class="btn-main">Download GoClip <span class="arr">→</span></a>
+    <a href="https://github.com/masonmcs/goclip-releases/releases/download/v1.0.0/GoClip.Setup.1.0.0.exe" class="btn-main" onclick="posthog.capture('download_clicked',{location:'hero'})">Download GoClip <span class="arr">→</span></a>
     <a href="#how" class="btn-sec">See how it works</a>
   </div>
   <div class="trust-row">
@@ -380,7 +389,7 @@ footer{padding:40px 60px;border-top:1px solid var(--b);display:flex;align-items:
         <li class="dim">GoClip watermark</li>
         <li class="dim">Priority support</li>
       </ul>
-      <button class="plan-btn ghost" onclick="openFreeModal()">Download Free</button>
+      <button class="plan-btn ghost" onclick="posthog.capture('plan_clicked',{plan:'free'});openFreeModal()">Download Free</button>
     </div>
     <div class="plan featured">
       <div class="plan-badge">POPULAR</div>
@@ -395,7 +404,7 @@ footer{padding:40px 60px;border-top:1px solid var(--b);display:flex;align-items:
         <li>No watermark</li>
         <li class="dim">Priority support</li>
       </ul>
-      <button class="plan-btn primary" onclick="startCheckout('pro')">Get Pro — $19/mo</button>
+      <button class="plan-btn primary" onclick="posthog.capture('plan_clicked',{plan:'pro'});startCheckout('pro')">Get Pro — $19/mo</button>
     </div>
     <div class="plan">
       <div class="plan-name">Premium</div>
@@ -409,7 +418,7 @@ footer{padding:40px 60px;border-top:1px solid var(--b);display:flex;align-items:
         <li>No watermark</li>
         <li>Priority support</li>
       </ul>
-      <button class="plan-btn ghost" onclick="startCheckout('premium')">Get Premium — $39/mo</button>
+      <button class="plan-btn ghost" onclick="posthog.capture('plan_clicked',{plan:'premium'});startCheckout('premium')">Get Premium — $39/mo</button>
     </div>
   </div>
   <p style="color:rgba(255,255,255,.2);font-size:13px;margin-top:28px">✓ Cancel anytime &nbsp;·&nbsp; ✓ Windows 10/11 &nbsp;·&nbsp; ✓ Works with any public Twitch channel</p>
@@ -487,6 +496,7 @@ document.querySelectorAll('.bento-section').forEach(s=>cob.observe(s));
 document.querySelectorAll('.faq-item').forEach(item=>{item.querySelector('.faq-q').addEventListener('click',()=>{const isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));if(!isOpen)item.classList.add('open');});});
 
 async function startCheckout(plan) {
+  posthog.capture('checkout_started', { plan: plan });
   try {
     const btn = event.target;
     btn.textContent = 'Loading...';
@@ -519,6 +529,7 @@ function closeFreeModal() {
 document.addEventListener('click', function(e) { if (e.target && e.target.id === 'freeModal') closeFreeModal(); });
 function getFreeKey() {
   var email = document.getElementById('freeEmail').value.trim();
+  posthog.capture('free_key_requested', { email_domain: email.split('@')[1] || '' });
   var btn = document.getElementById('freeBtn');
   var err = document.getElementById('freeError');
   if (!email || !email.includes('@')) { err.style.display = 'block'; err.textContent = 'Please enter a valid email address.'; return; }
@@ -569,5 +580,31 @@ function copyFreeKey() {
   </div>
 </div>
 
+<script>
+  // Track pricing section visibility
+  (function() {
+    var pricing = document.getElementById('pricing');
+    if (pricing && window.IntersectionObserver) {
+      var seen = false;
+      new IntersectionObserver(function(entries) {
+        if (!seen && entries[0].isIntersecting) {
+          seen = true;
+          posthog.capture('pricing_viewed');
+        }
+      }, { threshold: 0.3 }).observe(pricing);
+    }
+    // Track FAQ section
+    var faq = document.getElementById('faq');
+    if (faq && window.IntersectionObserver) {
+      var faqSeen = false;
+      new IntersectionObserver(function(entries) {
+        if (!faqSeen && entries[0].isIntersecting) {
+          faqSeen = true;
+          posthog.capture('faq_viewed');
+        }
+      }, { threshold: 0.3 }).observe(faq);
+    }
+  })();
+</script>
 </body>
 </html>
