@@ -20,7 +20,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;padding:18px 60px;display:fl
 .nav-right{display:flex;align-items:center;gap:20px}
 .nav-link{font-size:13px;color:rgba(255,255,255,.45);text-decoration:none;transition:color .2s}
 .nav-link:hover{color:#fff}
-.nav-mobile{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(192,132,252,0.1);border:1px solid rgba(192,132,252,0.35);border-radius:999px;font-size:12px;font-weight:700;color:var(--p);text-decoration:none;transition:all .2s;letter-spacing:-.1px}
+.nav-mobile{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(192,132,252,0.1);border:1px solid rgba(192,132,252,0.35);border-radius:999px;font-size:12px;font-weight:700;color:var(--p);font-family:inherit;cursor:pointer;transition:all .2s;letter-spacing:-.1px}
 .nav-mobile:hover{background:rgba(192,132,252,0.18);box-shadow:0 0 24px rgba(192,132,252,.25)}
 .nav-btn{background:var(--g);color:#000;border:none;padding:10px 22px;border-radius:999px;font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;letter-spacing:-.2px;text-decoration:none;display:inline-block}
 .nav-btn:hover{box-shadow:0 0 40px rgba(0,255,136,.5);transform:scale(1.05)}
@@ -105,29 +105,6 @@ canvas#c{position:fixed;inset:0;z-index:0;pointer-events:none}
 .ci{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
 .ci-yes{background:rgba(0,255,136,.12);color:var(--g)}
 .ci-no{background:rgba(255,255,255,.05);color:rgba(255,255,255,.2)}
-/* ─── MOBILE WAITLIST ─── */
-.mobile-section{padding:100px 60px;position:relative;overflow:hidden}
-.mobile-section::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 40%,rgba(192,132,252,0.08),transparent 60%);pointer-events:none}
-.mobile-wrap{position:relative;z-index:2;max-width:720px;margin:0 auto;text-align:center}
-.mobile-tag{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;background:rgba(192,132,252,0.1);border:1px solid rgba(192,132,252,0.3);border-radius:999px;font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--p);margin-bottom:24px}
-.mobile-tag-dot{width:6px;height:6px;border-radius:50%;background:var(--p);box-shadow:0 0 8px var(--p)}
-.mobile-h{font-size:clamp(40px,6vw,72px);font-weight:900;letter-spacing:-3px;line-height:1.05;margin-bottom:20px}
-.mobile-h em{color:var(--p);font-style:normal}
-.mobile-p{font-size:17px;line-height:1.65;color:rgba(255,255,255,.5);margin:0 auto 36px;max-width:560px}
-.mobile-form{display:flex;gap:10px;max-width:480px;margin:0 auto;flex-wrap:wrap}
-.mobile-input{flex:1;min-width:220px;padding:16px 20px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:#fff;font-family:inherit;font-size:15px;outline:none;transition:border-color .2s,background .2s}
-.mobile-input:focus{border-color:var(--p);background:rgba(192,132,252,0.05)}
-.mobile-btn{padding:16px 28px;background:var(--p);border:none;border-radius:12px;color:#000;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;white-space:nowrap;transition:all .2s;box-shadow:0 0 30px rgba(192,132,252,.35)}
-.mobile-btn:hover{transform:translateY(-2px);box-shadow:0 0 50px rgba(192,132,252,.55)}
-.mobile-note{margin-top:16px;font-size:12px;color:rgba(255,255,255,.3);letter-spacing:.5px;font-family:'DM Mono',monospace}
-.mobile-perks{margin-top:60px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.mobile-perk{padding:28px 22px;background:rgba(192,132,252,0.04);border:1px solid rgba(192,132,252,0.14);border-radius:16px;text-align:left;transition:all .3s}
-.mobile-perk:hover{background:rgba(192,132,252,0.08);border-color:rgba(192,132,252,0.25);transform:translateY(-3px)}
-.mobile-perk-icon{font-size:28px;margin-bottom:14px;display:block}
-.mobile-perk-h{font-size:15px;font-weight:700;color:#fff;margin-bottom:6px;letter-spacing:-.2px}
-.mobile-perk-p{font-size:13px;color:rgba(255,255,255,.45);line-height:1.55}
-.mobile-success{display:none;padding:20px 28px;background:rgba(192,132,252,0.1);border:1px solid rgba(192,132,252,0.3);border-radius:12px;color:var(--p);font-weight:700;font-size:14px;max-width:480px;margin:0 auto}
-/* ─── END MOBILE WAITLIST ─── */
 .pricing-section{padding:100px 60px;text-align:center}
 .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--b);border-radius:24px;overflow:hidden;max-width:960px;margin:60px auto 0}
 .plan{background:var(--s);padding:44px 36px;position:relative;transition:background .3s;text-align:left}
@@ -188,15 +165,12 @@ footer{padding:40px 60px;border-top:1px solid var(--b);display:flex;align-items:
   .bento{grid-template-columns:1fr 1fr}
   .bento-cell.wide{grid-column:span 2}
   .terminal-section{padding:0 16px 60px}
-  .process-section,.comp-section,.pricing-section,.faq-section,.mobile-section{padding:60px 16px}
+  .process-section,.comp-section,.pricing-section,.faq-section{padding:60px 16px}
   .process-grid{grid-template-columns:1fr}
   .comp-grid{grid-template-columns:1fr;max-width:100%}
   .comp-col.them{display:none}
   .pricing-grid{grid-template-columns:1fr;max-width:100%}
   .plan.featured{order:-1}
-  .mobile-perks{grid-template-columns:1fr;gap:12px}
-  .mobile-form{flex-direction:column}
-  .mobile-input,.mobile-btn{width:100%}
   .final-section{margin:20px}
   .final-bg{padding:60px 24px}
   .final-bg::before{font-size:80px}
@@ -214,7 +188,6 @@ footer{padding:40px 60px;border-top:1px solid var(--b);display:flex;align-items:
   .bento-cell.wide{grid-column:span 1}
   .hero-h1{letter-spacing:-2px}
   .section-h{letter-spacing:-2px}
-  .mobile-h{letter-spacing:-2px}
 }
 </style>
 
@@ -239,7 +212,7 @@ footer{padding:40px 60px;border-top:1px solid var(--b);display:flex;align-items:
     <a class="nav-link" href="#pricing">Pricing</a>
     <a class="nav-link" href="#faq">FAQ</a>
     <a class="nav-link" href="/recover.html">Recover Key</a>
-    <a class="nav-mobile" href="#mobile-waitlist" onclick="posthog.capture('mobile_waitlist_clicked',{location:'nav'})">📱 Mobile waitlist</a>
+    <button class="nav-mobile" onclick="openMobileModal()">📱 Mobile waitlist</button>
     <a href="https://github.com/masonmcs/goclip-releases/releases/download/v1.0.0/GoClip.Setup.1.0.0.exe" class="nav-btn" onclick="posthog.capture('download_clicked',{location:'nav'})">Download GoClip</a>
   </div>
 </nav>
@@ -403,47 +376,6 @@ footer{padding:40px 60px;border-top:1px solid var(--b);display:flex;align-items:
   </div>
 </section>
 
-<!-- ───────── MOBILE APP WAITLIST ───────── -->
-<section class="mobile-section r" id="mobile-waitlist">
-  <div class="mobile-wrap">
-    <div class="mobile-tag"><span class="mobile-tag-dot"></span>Coming soon · iOS + Android</div>
-    <h2 class="mobile-h">GoClip on your <em>phone.</em></h2>
-    <p class="mobile-p">No PC. No install. Just enter a streamer's name, pick a plan, and GoClip runs in the cloud. Clips post themselves. Perfect for on-the-go clippers and streamers who don't keep a desktop on 24/7.</p>
-
-    <form id="mobileForm" class="mobile-form" onsubmit="submitMobileWaitlist(event)">
-      <input type="hidden" name="_subject" value="GoClip Mobile — Waitlist signup">
-      <input type="hidden" name="form_source" value="mobile_waitlist">
-      <input type="email" name="email" id="mobileEmail" required placeholder="your@email.com" class="mobile-input"/>
-      <button type="submit" class="mobile-btn" id="mobileBtn">Join waitlist →</button>
-    </form>
-
-    <div id="mobileSuccess" class="mobile-success">
-      ✓ You're on the list. We'll email you when mobile launches.
-    </div>
-
-    <div class="mobile-note">No spam · Early access · Launch pricing locked in</div>
-
-    <div class="mobile-perks">
-      <div class="mobile-perk">
-        <span class="mobile-perk-icon">☁️</span>
-        <div class="mobile-perk-h">Runs in the cloud</div>
-        <div class="mobile-perk-p">No PC to leave on. Clips render on our servers 24/7.</div>
-      </div>
-      <div class="mobile-perk">
-        <span class="mobile-perk-icon">📲</span>
-        <div class="mobile-perk-h">Manage on mobile</div>
-        <div class="mobile-perk-p">Review clips, tweak schedules, post to TikTok from your phone.</div>
-      </div>
-      <div class="mobile-perk">
-        <span class="mobile-perk-icon">🎁</span>
-        <div class="mobile-perk-h">Waitlist perks</div>
-        <div class="mobile-perk-p">First 100 signups get 50% off the first 3 months at launch.</div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- ───────── END MOBILE APP WAITLIST ───────── -->
-
 <section class="pricing-section r" id="pricing">
   <div class="section-tag">Pricing</div>
   <div class="section-h">Start free.<br>Scale when ready.</div>
@@ -502,8 +434,7 @@ footer{padding:40px 60px;border-top:1px solid var(--b);display:flex;align-items:
   <div class="faq-list">
     <div class="faq-item"><div class="faq-q">Can I use GoClip for someone else's channel? <span class="faq-icon">+</span></div><div class="faq-a">Yes — GoClip works with any public Twitch channel. Streamers can clip their own VODs, and clippers can run it on their favorite streamer's channel. Just enter the channel name and you're good to go.</div></div>
     <div class="faq-item"><div class="faq-q">How does the AI decide which clips to keep? <span class="faq-icon">+</span></div><div class="faq-a">GoClip transcribes the VOD using Whisper, then sends the full transcript to Claude AI. Claude scores each moment based on humor, hype, reactions, and viral potential. You set the minimum quality score — only clips that hit your threshold get rendered.</div></div>
-    <div class="faq-item"><div class="faq-q">Do I need to keep my PC on? <span class="faq-icon">+</span></div><div class="faq-a">Yes — GoClip is a Windows desktop app. Keep it running and it handles everything automatically. You can minimize it to the taskbar and forget about it. A mobile/cloud version is in development — <a href="#mobile-waitlist" style="color:var(--p)">join the waitlist</a>.</div></div>
-    <div class="faq-item"><div class="faq-q">Is there a mobile app? <span class="faq-icon">+</span></div><div class="faq-a">Not yet — but one's in development. The mobile version runs entirely in the cloud, so there's no PC to leave on. <a href="#mobile-waitlist" style="color:var(--p)">Join the waitlist</a> for early access and 50% off the first 3 months at launch (first 100 signups only).</div></div>
+    <div class="faq-item"><div class="faq-q">Do I need to keep my PC on? <span class="faq-icon">+</span></div><div class="faq-a">Yes — GoClip is a Windows desktop app. Keep it running and it handles everything automatically. You can minimize it to the taskbar and forget about it.</div></div>
     <div class="faq-item"><div class="faq-q">What does the watermark on the free tier look like? <span class="faq-icon">+</span></div><div class="faq-a">Free tier clips include a small GoClip.io watermark in the top-left corner. It's removed completely on Pro and Premium plans.</div></div>
     <div class="faq-item"><div class="faq-q">What do I need to run GoClip? <span class="faq-icon">+</span></div><div class="faq-a">Windows 10 or 11, an internet connection, and a TikTok account. Everything else — Python, ffmpeg, Whisper AI — is bundled inside the installer. No technical setup required.</div></div>
     <div class="faq-item"><div class="faq-q">Why does Windows show a security warning? <span class="faq-icon">+</span></div><div class="faq-a">This is normal for new independent software. Windows SmartScreen flags apps from new publishers as "Unknown Publisher." GoClip is safe — just click <strong>More info → Run anyway</strong> to install. We're working on a code signing certificate to remove this warning.</div></div>
@@ -525,7 +456,6 @@ footer{padding:40px 60px;border-top:1px solid var(--b);display:flex;align-items:
   <ul class="foot-links">
     <li><a href="#how">How it works</a></li>
     <li><a href="#pricing">Pricing</a></li>
-    <li><a href="#mobile-waitlist">Mobile waitlist</a></li>
     <li><a href="#faq">FAQ</a></li>
     <li><a href="mailto:goclipadmin@gmail.com">Support</a></li>
   </ul>
@@ -600,7 +530,10 @@ function closeFreeModal() {
   var m = document.getElementById('freeModal');
   if (m) m.style.display = 'none';
 }
-document.addEventListener('click', function(e) { if (e.target && e.target.id === 'freeModal') closeFreeModal(); });
+document.addEventListener('click', function(e) {
+  if (e.target && e.target.id === 'freeModal') closeFreeModal();
+  if (e.target && e.target.id === 'mobileModal') closeMobileModal();
+});
 function getFreeKey() {
   var email = document.getElementById('freeEmail').value.trim();
   posthog.capture('free_key_requested', { email_domain: email.split('@')[1] || '' });
@@ -624,39 +557,58 @@ function copyFreeKey() {
   navigator.clipboard.writeText(key).then(function() { var btn = document.getElementById('copyFreeBtn'); btn.textContent = 'Copied!'; setTimeout(function() { btn.textContent = 'Copy Key'; }, 2000); });
 }
 
-// Mobile waitlist submit - posts to Formspree via fetch, shows inline success
-async function submitMobileWaitlist(e) {
-  e.preventDefault();
-  var form = document.getElementById('mobileForm');
+// Mobile waitlist modal
+function openMobileModal() {
+  posthog.capture('mobile_waitlist_clicked', { location: 'nav' });
+  var m = document.getElementById('mobileModal');
+  if (!m) return;
+  m.style.display = 'flex';
+  document.getElementById('mobileStep1').style.display = 'block';
+  document.getElementById('mobileStep2').style.display = 'none';
+  document.getElementById('mobileEmail').value = '';
+  document.getElementById('mobileError').style.display = 'none';
+  setTimeout(function() { document.getElementById('mobileEmail').focus(); }, 100);
+}
+function closeMobileModal() {
+  var m = document.getElementById('mobileModal');
+  if (m) m.style.display = 'none';
+}
+function joinMobileWaitlist() {
+  var email = document.getElementById('mobileEmail').value.trim();
   var btn = document.getElementById('mobileBtn');
-  var emailInput = document.getElementById('mobileEmail');
-  var success = document.getElementById('mobileSuccess');
-  var email = emailInput.value.trim();
-  if (!email || !email.includes('@')) return;
-  btn.textContent = 'Sending...';
-  btn.disabled = true;
-  posthog.capture('mobile_waitlist_signup', { email_domain: email.split('@')[1] || '' });
-  try {
-    var res = await fetch('https://formspree.io/f/xqewavny', {
-      method: 'POST',
-      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: email,
-        _subject: 'GoClip Mobile — Waitlist signup',
-        form_source: 'mobile_waitlist'
-      })
-    });
-    if (res.ok) {
-      form.style.display = 'none';
-      success.style.display = 'block';
-    } else {
-      throw new Error('Submission failed');
-    }
-  } catch (err) {
-    btn.textContent = 'Try again';
-    btn.disabled = false;
-    console.error(err);
+  var err = document.getElementById('mobileError');
+  if (!email || !email.includes('@')) {
+    err.style.display = 'block';
+    err.textContent = 'Please enter a valid email address.';
+    return;
   }
+  btn.textContent = 'Joining...';
+  btn.disabled = true;
+  err.style.display = 'none';
+  posthog.capture('mobile_waitlist_signup', { email_domain: email.split('@')[1] || '' });
+  fetch('https://formspree.io/f/xqewavny', {
+    method: 'POST',
+    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email: email,
+      _subject: 'GoClip Mobile — Waitlist signup',
+      form_source: 'mobile_waitlist'
+    })
+  })
+  .then(function(r) {
+    if (r.ok) {
+      document.getElementById('mobileStep1').style.display = 'none';
+      document.getElementById('mobileStep2').style.display = 'block';
+    } else {
+      throw new Error('Failed');
+    }
+  })
+  .catch(function() {
+    err.style.display = 'block';
+    err.textContent = 'Something went wrong. Please try again.';
+    btn.textContent = 'Join the waitlist →';
+    btn.disabled = false;
+  });
 }
 </script>
 
@@ -689,6 +641,34 @@ async function submitMobileWaitlist(e) {
   </div>
 </div>
 
+<!-- MOBILE WAITLIST MODAL -->
+<div id="mobileModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:8000;align-items:center;justify-content:center;backdrop-filter:blur(10px)">
+  <div style="background:#0a0a0f;border:1px solid rgba(192,132,252,0.25);border-radius:24px;padding:52px 44px;max-width:480px;width:90%;position:relative;text-align:center">
+    <button onclick="closeMobileModal()" style="position:absolute;top:16px;right:20px;background:none;border:none;color:rgba(255,255,255,0.3);font-size:24px;cursor:pointer;line-height:1">×</button>
+    <div id="mobileStep1">
+      <div style="font-size:40px;margin-bottom:20px">📱</div>
+      <h2 style="font-size:26px;font-weight:900;letter-spacing:-1px;margin-bottom:10px">GoClip on your phone.</h2>
+      <p style="color:rgba(255,255,255,0.45);font-size:14px;line-height:1.7;margin-bottom:12px">Mobile version coming soon. Runs in the cloud — no PC to leave on. Manage everything from iOS or Android.</p>
+      <p style="color:#c084fc;font-size:13px;font-weight:700;margin-bottom:24px">First 100 signups get 50% off the first 3 months at launch.</p>
+      <input type="email" id="mobileEmail" placeholder="your@email.com" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:14px 16px;color:#fff;font-size:15px;font-family:inherit;outline:none;margin-bottom:12px;transition:border-color 0.2s" onfocus="this.style.borderColor='rgba(192,132,252,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" onkeydown="if(event.key==='Enter')joinMobileWaitlist()"/>
+      <button onclick="joinMobileWaitlist()" id="mobileBtn" style="width:100%;background:#c084fc;color:#000;border:none;padding:14px;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;transition:all 0.2s;box-shadow:0 0 24px rgba(192,132,252,0.3)">Join the waitlist →</button>
+      <div id="mobileError" style="display:none;margin-top:12px;font-size:13px;color:#ff4444;"></div>
+      <p style="color:rgba(255,255,255,0.2);font-size:12px;margin-top:16px">No spam · Early access · Launch pricing locked in</p>
+    </div>
+    <div id="mobileStep2" style="display:none">
+      <div style="font-size:40px;margin-bottom:20px">🎉</div>
+      <h2 style="font-size:26px;font-weight:900;letter-spacing:-1px;margin-bottom:10px">You're on the list.</h2>
+      <p style="color:rgba(255,255,255,0.45);font-size:14px;line-height:1.7;margin-bottom:24px">We'll email you the moment GoClip Mobile launches. Your founder pricing is locked in.</p>
+      <div style="background:rgba(192,132,252,0.08);border:1px solid rgba(192,132,252,0.25);border-radius:12px;padding:20px;margin-bottom:16px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:10px">While you wait</div>
+        <p style="color:rgba(255,255,255,0.65);font-size:14px;line-height:1.6;margin-bottom:14px">Desktop version is live. Try GoClip free and start clipping today.</p>
+        <a href="https://github.com/masonmcs/goclip-releases/releases/download/v1.0.0/GoClip.Setup.1.0.0.exe" style="display:inline-block;background:#00ff88;color:#000;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:800;font-size:13px">⬇️ Download GoClip (desktop)</a>
+      </div>
+      <a href="#" onclick="closeMobileModal();return false;" style="display:block;background:rgba(255,255,255,0.06);color:#fff;border:1px solid rgba(255,255,255,0.1);padding:12px;border-radius:10px;text-decoration:none;font-weight:700;font-size:14px">Close</a>
+    </div>
+  </div>
+</div>
+
 <script>
   // Track pricing section visibility
   (function() {
@@ -712,17 +692,6 @@ async function submitMobileWaitlist(e) {
           posthog.capture('faq_viewed');
         }
       }, { threshold: 0.3 }).observe(faq);
-    }
-    // Track mobile waitlist section
-    var mobile = document.getElementById('mobile-waitlist');
-    if (mobile && window.IntersectionObserver) {
-      var mobileSeen = false;
-      new IntersectionObserver(function(entries) {
-        if (!mobileSeen && entries[0].isIntersecting) {
-          mobileSeen = true;
-          posthog.capture('mobile_waitlist_viewed');
-        }
-      }, { threshold: 0.3 }).observe(mobile);
     }
   })();
 </script>
