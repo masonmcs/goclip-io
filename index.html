@@ -132,6 +132,66 @@ canvas#c{position:fixed;inset:0;z-index:0;pointer-events:none}
 .plan-btn.primary:hover{box-shadow:0 0 40px rgba(0,255,136,.4);transform:translateY(-2px)}
 .plan-btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6)}
 .plan-btn.ghost:hover{border-color:rgba(255,255,255,.3);color:#fff}
+
+/* ═══ SAFETY SECTION ══════════════════════════════════════════════════ */
+.safety-section{padding:100px 60px;position:relative}
+.safety-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1200px;margin:0 auto 80px}
+.safety-col{background:var(--s);border:1px solid var(--b);border-radius:20px;padding:32px 28px;position:relative;transition:all .3s}
+.safety-col:hover{border-color:rgba(0,255,136,.15);transform:translateY(-4px)}
+.safety-step{display:inline-block;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;color:var(--g);letter-spacing:2px;padding:4px 10px;background:rgba(0,255,136,.08);border-radius:999px;margin-bottom:18px;text-transform:uppercase}
+.safety-label{font-size:22px;font-weight:800;letter-spacing:-.8px;color:#fff;margin-bottom:24px}
+.safety-caption{font-size:13px;color:rgba(255,255,255,.45);line-height:1.6;margin-top:18px}
+
+/* SmartScreen mockup */
+.safety-mock{background:#1f1f1f;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:20px 18px;font-family:'Segoe UI',system-ui,sans-serif;position:relative;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.mock-header{position:relative}
+.mock-shield{position:absolute;top:-4px;left:-4px;width:36px;height:36px;background:#ff9100;border-radius:4px;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;font-family:sans-serif}
+.mock-title{font-size:15px;font-weight:700;color:#fff;padding-left:48px;margin-bottom:10px;letter-spacing:-.2px}
+.mock-body{font-size:12px;color:rgba(255,255,255,.7);line-height:1.5;padding-left:48px;margin-bottom:14px}
+.mock-app{font-size:11px;color:rgba(255,255,255,.55);padding-left:48px;line-height:1.6;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:10px}
+.mock-app-label{color:rgba(255,255,255,.4)}
+.mock-link{font-size:12px;color:#4cc2ff;padding-left:48px;cursor:pointer;text-decoration:underline;font-weight:500}
+
+/* Column 2 - explanation */
+.safety-explain p{font-size:14px;color:rgba(255,255,255,.6);line-height:1.7;margin-bottom:14px}
+.safety-explain p strong{color:#fff;font-weight:700}
+.safety-quote{border-left:2px solid var(--g);padding-left:14px;font-style:italic;color:rgba(255,255,255,.5) !important;font-size:13px !important;margin-top:18px !important}
+
+/* Column 3 - action steps */
+.safety-action{background:#060606;border:1px solid rgba(0,255,136,.15);border-radius:14px;padding:24px}
+.safety-action-row{display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:1px dashed rgba(255,255,255,.06)}
+.safety-action-row:last-of-type{border-bottom:none}
+.safety-action-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--g);color:#000;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace}
+.safety-action-text{font-size:14px;color:rgba(255,255,255,.7);line-height:1.5}
+.safety-action-text strong{color:#fff}
+.safety-action-text strong.g{color:var(--g)}
+.safety-time{margin-top:18px;font-family:'DM Mono',monospace;font-size:11px;color:var(--g);text-align:center;padding:8px;background:rgba(0,255,136,.06);border-radius:6px;letter-spacing:.5px}
+
+/* Proof strip */
+.proof-strip{max-width:1200px;margin:0 auto 60px}
+.proof-strip-title{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:rgba(255,255,255,.35);letter-spacing:3px;text-transform:uppercase;text-align:center;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--b)}
+.proof-bars{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.proof-bar{background:rgba(255,255,255,.02);border:1px solid var(--b);border-radius:14px;padding:22px;display:flex;align-items:flex-start;gap:16px;transition:all .3s;text-decoration:none;color:inherit}
+a.proof-bar:hover{background:rgba(0,255,136,.04);border-color:rgba(0,255,136,.2);transform:translateY(-2px)}
+.proof-bar-icon{flex-shrink:0;width:40px;height:40px;border-radius:10px;background:rgba(0,255,136,.08);color:var(--g);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800}
+.proof-bar-body{flex:1;min-width:0}
+.proof-bar-title{font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;letter-spacing:-.2px}
+.proof-bar-desc{font-size:13px;color:rgba(255,255,255,.5);line-height:1.55}
+.proof-bar-arrow{flex-shrink:0;color:var(--g);font-size:18px;opacity:.5;transition:all .2s}
+a.proof-bar:hover .proof-bar-arrow{opacity:1;transform:translateX(4px)}
+
+/* Honesty block */
+.safety-honesty{max-width:720px;margin:0 auto 60px;background:linear-gradient(135deg,rgba(192,132,252,.06),rgba(0,255,136,.04));border:1px solid rgba(192,132,252,.15);border-radius:18px;padding:32px 36px}
+.safety-honesty-label{display:inline-block;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;color:var(--p);letter-spacing:2px;padding:4px 10px;background:rgba(192,132,252,.1);border-radius:999px;margin-bottom:18px;text-transform:uppercase}
+.safety-honesty p{font-size:15px;color:rgba(255,255,255,.65);line-height:1.7;margin-bottom:12px}
+.safety-honesty p:last-child{margin-bottom:0}
+.safety-honesty p strong{color:#fff;font-weight:700}
+
+/* Final CTA in section */
+.safety-cta{text-align:center}
+.safety-cta .btn-main{margin:0 auto}
+.safety-cta-sub{margin-top:18px;font-size:13px;color:rgba(255,255,255,.4);font-family:'DM Mono',monospace;letter-spacing:.5px}
+
 .faq-section{padding:100px 60px}
 .faq-list{max-width:720px;margin:60px auto 0}
 .faq-item{border-bottom:1px solid var(--b);padding:28px 0;cursor:pointer}
@@ -170,12 +230,18 @@ footer{padding:40px 60px;border-top:1px solid var(--b);display:flex;align-items:
   .bento{grid-template-columns:1fr 1fr}
   .bento-cell.wide{grid-column:span 2}
   .terminal-section{padding:0 16px 60px}
-  .process-section,.comp-section,.pricing-section,.faq-section{padding:60px 16px}
+  .process-section,.comp-section,.pricing-section,.faq-section,.safety-section{padding:60px 16px}
   .process-grid{grid-template-columns:1fr}
   .comp-grid{grid-template-columns:1fr;max-width:100%}
   .comp-col.them{display:none}
   .pricing-grid{grid-template-columns:1fr;max-width:100%}
   .plan.featured{order:-1}
+  .safety-grid{grid-template-columns:1fr;gap:16px}
+  .proof-bars{grid-template-columns:1fr;gap:10px}
+  .safety-honesty{padding:24px 22px;margin:0 0 40px}
+  .safety-col{padding:24px 20px}
+  .mock-title,.mock-body,.mock-app,.mock-link{padding-left:42px}
+  .mock-shield{width:30px;height:30px;font-size:18px}
   .final-section{margin:20px}
   .final-bg{padding:60px 24px}
   .final-bg::before{font-size:80px}
@@ -215,6 +281,7 @@ footer{padding:40px 60px;border-top:1px solid var(--b);display:flex;align-items:
   <div class="nav-right">
     <a class="nav-link" href="#how">How it works</a>
     <a class="nav-link" href="#pricing">Pricing</a>
+    <a class="nav-link" href="#safety">Is it safe?</a>
     <a class="nav-link" href="#faq">FAQ</a>
     <a class="nav-link" href="/recover.html">Recover Key</a>
     <button class="nav-mobile" onclick="openMobileModal()">📱 Mobile waitlist</button>
@@ -243,8 +310,8 @@ footer{padding:40px 60px;border-top:1px solid var(--b);display:flex;align-items:
     <div class="trust-dot"></div>
     <div class="trust-item">✓ Windows 10/11</div>
   </div>
-  <div style="margin-top:24px;background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.12);border-radius:12px;padding:12px 20px;display:flex;align-items:center;gap:10px;max-width:560px;font-size:13px;color:rgba(255,255,255,.45)">
-    🛡️ Windows may show an "Unknown Publisher" warning — click <strong style="color:#fff;margin:0 4px">More info → Run anyway</strong> to install safely.
+  <div style="margin-top:24px;background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.12);border-radius:12px;padding:12px 20px;display:flex;align-items:center;gap:10px;max-width:560px;font-size:13px;color:rgba(255,255,255,.55)">
+    🛡️ Windows shows a "Unknown Publisher" warning on install. <a href="#safety" style="color:var(--g);text-decoration:none;font-weight:600;margin-left:6px">See why (and why it's safe) →</a>
   </div>
   <div class="live-feed" id="feed"></div>
 </section>
@@ -442,6 +509,107 @@ footer{padding:40px 60px;border-top:1px solid var(--b);display:flex;align-items:
   <p style="color:rgba(255,255,255,.2);font-size:13px;margin-top:28px">✓ Cancel anytime &nbsp;·&nbsp; ✓ Windows 10/11 &nbsp;·&nbsp; ✓ Works with any public Twitch channel</p>
 </section>
 
+<section class="safety-section r" id="safety">
+  <div class="section-tag">Is it safe?</div>
+  <div class="section-h">Yes.<br>Here's proof.</div>
+
+  <div class="safety-grid">
+    <!-- Column 1: What you'll see -->
+    <div class="safety-col">
+      <div class="safety-step">Step 1</div>
+      <div class="safety-label">What you'll see</div>
+      <div class="safety-mock">
+        <div class="mock-header">
+          <div class="mock-shield">!</div>
+          <div class="mock-title">Windows protected your PC</div>
+          <div class="mock-body">Microsoft Defender SmartScreen prevented an unrecognized app from starting. Running this app might put your PC at risk.</div>
+          <div class="mock-app"><span class="mock-app-label">App:</span> GoClip.Setup.1.0.0.exe<br><span class="mock-app-label">Publisher:</span> Unknown publisher</div>
+          <div class="mock-link">More info</div>
+        </div>
+      </div>
+      <p class="safety-caption">Yes, really. Every indie Windows app gets this. It's the default for anything not signed by a $500/yr corporate certificate.</p>
+    </div>
+
+    <!-- Column 2: What it means -->
+    <div class="safety-col">
+      <div class="safety-step">Step 2</div>
+      <div class="safety-label">What it actually means</div>
+      <div class="safety-explain">
+        <p><strong>Microsoft hasn't seen GoClip enough times yet.</strong></p>
+        <p>SmartScreen shows this for every new app from a small publisher. It's a popularity warning, not a virus warning.</p>
+        <p>The warning goes away automatically once enough people install. That's the entire mechanism. No malware detected, no suspicious behavior flagged — just "new."</p>
+        <p class="safety-quote">Every single indie Windows developer on earth hits this. It's an awareness tax on new software, not a signal of risk.</p>
+      </div>
+    </div>
+
+    <!-- Column 3: What to click -->
+    <div class="safety-col">
+      <div class="safety-step">Step 3</div>
+      <div class="safety-label">What to click</div>
+      <div class="safety-action">
+        <div class="safety-action-row">
+          <div class="safety-action-num">1</div>
+          <div class="safety-action-text">Click <strong>"More info"</strong> on the warning</div>
+        </div>
+        <div class="safety-action-row">
+          <div class="safety-action-num">2</div>
+          <div class="safety-action-text">A <strong>"Run anyway"</strong> button appears</div>
+        </div>
+        <div class="safety-action-row">
+          <div class="safety-action-num">3</div>
+          <div class="safety-action-text">Click it. GoClip installs. <strong class="g">You're done.</strong></div>
+        </div>
+        <div class="safety-time">⏱ Takes 4 seconds</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Proof strip -->
+  <div class="proof-strip">
+    <div class="proof-strip-title">Independent verification</div>
+    <div class="proof-bars">
+      <a href="https://www.virustotal.com/gui/file/9fdc848e0b3b3613d1453bc454872ce00f1d2a75221944c7b14e232b38b61259?nocache=1" target="_blank" rel="noopener" class="proof-bar" onclick="posthog.capture('virustotal_clicked')">
+        <div class="proof-bar-icon">✓</div>
+        <div class="proof-bar-body">
+          <div class="proof-bar-title">VirusTotal scan · Clean</div>
+          <div class="proof-bar-desc">Scanned against 70+ antivirus engines. Every single one came back clean. View the full report.</div>
+        </div>
+        <div class="proof-bar-arrow">→</div>
+      </a>
+
+      <div class="proof-bar">
+        <div class="proof-bar-icon">👤</div>
+        <div class="proof-bar-body">
+          <div class="proof-bar-title">Built by a real person</div>
+          <div class="proof-bar-desc">Mason — solo founder, also streams on Twitch. Not a faceless company. <a href="mailto:goclipadmin@gmail.com" style="color:var(--g);text-decoration:none">Email me</a> with anything.</div>
+        </div>
+      </div>
+
+      <div class="proof-bar">
+        <div class="proof-bar-icon">📦</div>
+        <div class="proof-bar-body">
+          <div class="proof-bar-title">What's inside</div>
+          <div class="proof-bar-desc">Bundles Python + Whisper AI + ffmpeg. All open-source tools you'd install anyway. Nothing proprietary, nothing hidden.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Why no cert yet -->
+  <div class="safety-honesty">
+    <div class="safety-honesty-label">Real talk</div>
+    <p><strong>Why haven't I bought a code signing certificate?</strong></p>
+    <p>They cost $300–600 a year plus a hardware token. I'm a solo founder pre-revenue. Buying a certificate before GoClip is validated by paying customers is premature spending.</p>
+    <p>Once GoClip hits ~$500 in monthly revenue, I'll buy an EV code signing certificate and this warning disappears for everyone. Until then: one extra click, and you're in.</p>
+  </div>
+
+  <!-- One clear CTA -->
+  <div class="safety-cta">
+    <a href="https://github.com/masonmcs/goclip-releases/releases/download/v1.0.0/GoClip.Setup.1.0.0.exe" class="btn-main" onclick="posthog.capture('download_clicked',{location:'safety_section'})">Download GoClip <span class="arr">→</span></a>
+    <div class="safety-cta-sub">Free tier · No credit card · 4 seconds past the warning</div>
+  </div>
+</section>
+
 <section class="faq-section r" id="faq">
   <div class="section-tag">FAQ</div>
   <div class="section-h">Questions<br>answered.</div>
@@ -451,7 +619,7 @@ footer{padding:40px 60px;border-top:1px solid var(--b);display:flex;align-items:
     <div class="faq-item"><div class="faq-q">Do I need to keep my PC on? <span class="faq-icon">+</span></div><div class="faq-a">Yes — GoClip is a Windows desktop app. Keep it running and it handles everything automatically. You can minimize it to the taskbar and forget about it.</div></div>
     <div class="faq-item"><div class="faq-q">What does the watermark on the free tier look like? <span class="faq-icon">+</span></div><div class="faq-a">Free tier clips include a small GoClip.io watermark in the top-left corner. It's removed completely on Pro and Premium plans.</div></div>
     <div class="faq-item"><div class="faq-q">What do I need to run GoClip? <span class="faq-icon">+</span></div><div class="faq-a">Windows 10 or 11, an internet connection, and a TikTok account. Everything else — Python, ffmpeg, Whisper AI — is bundled inside the installer. No technical setup required.</div></div>
-    <div class="faq-item"><div class="faq-q">Why does Windows show a security warning? <span class="faq-icon">+</span></div><div class="faq-a">This is normal for new independent software. Windows SmartScreen flags apps from new publishers as "Unknown Publisher." GoClip is safe — just click <strong>More info → Run anyway</strong> to install. We're working on a code signing certificate to remove this warning.</div></div>
+    <div class="faq-item"><div class="faq-q">Is GoClip safe to install? <span class="faq-icon">+</span></div><div class="faq-a">Yes. The full breakdown — SmartScreen explained, VirusTotal scan, what's bundled inside — is in the <a href="#safety" style="color:var(--g);text-decoration:none;font-weight:600">Is it safe?</a> section above.</div></div>
     <div class="faq-item"><div class="faq-q">Can I cancel my subscription anytime? <span class="faq-icon">+</span></div><div class="faq-a">Yes. Cancel anytime from your account with no fees or penalties. If you cancel, you keep access until the end of your billing period.</div></div>
     <div class="faq-item"><div class="faq-q">How does founder pricing work? <span class="faq-icon">+</span></div><div class="faq-a">Subscribe now at today's rate — $19/mo Pro or $39/mo Premium — and your price stays locked forever, as long as your subscription stays active. If you cancel and resubscribe later, you'll be billed at the new-user rate in effect at that time. Founder pricing rewards continuous subscribers, not people who hop in and out. Prices rise when we ship mobile and cloud rendering.</div></div>
   </div>
