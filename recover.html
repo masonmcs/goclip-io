@@ -15,18 +15,26 @@ h1{font-size:28px;font-weight:900;letter-spacing:-1px;margin-bottom:12px}
 p{color:rgba(255,255,255,0.45);font-size:15px;line-height:1.7;margin-bottom:32px}
 input{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:14px 16px;color:#fff;font-size:15px;font-family:inherit;outline:none;margin-bottom:12px;transition:border-color 0.2s}
 input:focus{border-color:rgba(0,255,136,0.4)}
+input.code{text-align:center;font-size:24px;font-weight:800;letter-spacing:8px;font-family:monospace}
 button{width:100%;background:#00ff88;color:#000;border:none;padding:16px;border-radius:10px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;transition:all 0.2s}
 button:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(0,255,136,0.3)}
 button:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.btn-secondary{background:transparent;border:1px solid rgba(255,255,255,0.15);color:#fff;padding:14px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:inherit;margin-top:10px;transition:all 0.2s}
+.btn-secondary:hover{border-color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.04)}
+.btn-secondary:disabled{opacity:0.5;cursor:not-allowed}
+.btn-upsell{background:rgba(192,132,252,0.1);border:1px solid rgba(192,132,252,0.35);color:#c084fc}
+.btn-upsell:hover{background:rgba(192,132,252,0.18);border-color:rgba(192,132,252,0.5)}
+.btn-link{background:transparent;border:none;color:rgba(255,255,255,0.45);font-size:13px;cursor:pointer;font-family:inherit;text-decoration:underline;margin-top:10px;width:auto;padding:8px;display:inline-block}
+.btn-link:hover{color:#fff}
+.error-msg{color:#ff6060;font-size:13px;margin-top:8px;min-height:18px}
+.info-msg{color:rgba(255,255,255,0.55);font-size:13px;margin-top:12px}
 .result{margin-top:24px;padding:20px;border-radius:12px;display:none}
 .result.success{background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.2)}
-.result.error{background:rgba(255,68,68,0.08);border:1px solid rgba(255,68,68,0.2)}
 .key-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:10px}
 .key-value{font-size:18px;font-weight:800;font-family:monospace;color:#00ff88;letter-spacing:2px;word-break:break-all;margin-bottom:12px}
 .copy-btn{background:transparent;border:1px solid rgba(0,255,136,0.3);color:#00ff88;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;width:auto;font-family:inherit}
 .back{display:inline-block;color:rgba(255,255,255,0.3);font-size:13px;text-decoration:none;margin-top:24px;transition:color 0.2s}
 .back:hover{color:#fff}
-/* Account-management section appears below the key when lookup succeeds */
 .account-section{margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.08)}
 .plan-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;font-size:13px}
 .plan-row .label{color:rgba(255,255,255,0.45);font-weight:600}
@@ -34,194 +42,279 @@ button:disabled{opacity:0.5;cursor:not-allowed;transform:none}
 .plan-badge.free{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.12)}
 .plan-badge.pro{background:rgba(0,255,136,0.12);color:#00ff88;border:1px solid rgba(0,255,136,0.3)}
 .plan-badge.premium{background:rgba(192,132,252,0.12);color:#c084fc;border:1px solid rgba(192,132,252,0.3)}
-.btn-secondary{background:transparent;border:1px solid rgba(255,255,255,0.15);color:#fff;padding:14px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:inherit;margin-top:10px;transition:all 0.2s}
-.btn-secondary:hover{border-color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.04)}
-.btn-secondary:disabled{opacity:0.5;cursor:not-allowed}
-.btn-upsell{background:rgba(192,132,252,0.1);border:1px solid rgba(192,132,252,0.35);color:#c084fc}
-.btn-upsell:hover{background:rgba(192,132,252,0.18);border-color:rgba(192,132,252,0.5)}
-.account-error{color:#ff6060;font-size:12px;margin-top:8px;display:none}
+.email-display{color:rgba(255,255,255,0.55);font-size:13px;margin-bottom:14px}
+.email-display b{color:#fff}
 </style>
 </head>
 <body>
 <div class="card">
   <div class="logo">Go<span>Clip</span></div>
-  <h1>Recover Your License Key</h1>
-  <p>Enter the email address you used when you purchased GoClip and we'll show you your license key.</p>
-  <input type="email" id="emailInput" placeholder="your@email.com" onkeydown="if(event.key==='Enter')lookup()"/>
-  <button onclick="lookup()" id="lookupBtn">Find My Key →</button>
-  <div id="result" class="result">
-    <div id="successContent" style="display:none">
+
+  <!-- ─── STEP 1: Email entry ─────────────────────────────────────── -->
+  <div id="step1">
+    <h1>Recover Your License Key</h1>
+    <p>Enter the email you used to purchase GoClip. We'll send a 6-digit code to verify it's you.</p>
+    <input type="email" id="emailInput" placeholder="your@email.com" onkeydown="if(event.key==='Enter')requestCode()" autocomplete="email"/>
+    <button onclick="requestCode()" id="requestBtn">Send Verification Code →</button>
+    <div class="error-msg" id="step1Error"></div>
+  </div>
+
+  <!-- ─── STEP 2: Code entry ──────────────────────────────────────── -->
+  <div id="step2" style="display:none">
+    <h1>Check Your Email</h1>
+    <p>We sent a 6-digit code to <b id="emailEcho" style="color:#fff"></b>. Enter it below.</p>
+    <input type="text" id="codeInput" class="code" placeholder="------" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" onkeydown="if(event.key==='Enter')verifyCode()" oninput="this.value=this.value.replace(/[^0-9]/g,'')"/>
+    <button onclick="verifyCode()" id="verifyBtn">Verify →</button>
+    <div class="error-msg" id="step2Error"></div>
+    <div class="info-msg">
+      Didn't receive it? Check your spam folder.
+      <br/>
+      <button class="btn-link" onclick="resetToStep1()">Use a different email</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 3: License + billing controls ──────────────────────── -->
+  <div id="step3" style="display:none">
+    <h1>Your Account</h1>
+    <div class="email-display">Verified as <b id="verifiedEmail"></b></div>
+    <div class="result success" style="display:block">
       <div class="key-label">Your License Key</div>
       <div class="key-value" id="keyDisplay">—</div>
-      <button class="copy-btn" onclick="copyKey()">Copy Key</button>
+      <button class="copy-btn" onclick="copyKey()" id="copyBtn">Copy Key</button>
       <p style="margin-top:12px;font-size:13px;color:rgba(255,255,255,0.35)">Enter this key in GoClip Settings → License Key → Validate</p>
 
-      <!-- Account-management section: shown once we know the user's plan.
-           Paid users get "Manage Billing" → Stripe Customer Portal.
-           Free users get "Upgrade to Pro" → pricing page on landing site.
-           This is the soft upsell + self-serve billing in one section. -->
-      <div class="account-section" id="accountSection" style="display:none">
+      <div class="account-section">
         <div class="plan-row">
           <span class="label">Current plan</span>
           <span class="plan-badge" id="planBadge">—</span>
         </div>
         <button id="billingBtn" class="btn-secondary" onclick="openPortal()">Manage Billing →</button>
-        <div class="account-error" id="accountError"></div>
+        <div class="error-msg" id="step3Error"></div>
       </div>
     </div>
-    <div id="errorContent" style="display:none">
-      <p style="color:#ff6060;margin:0">No license found for that email. Make sure you're using the email you purchased with.<br/><br/>Need help? Email <strong style="color:#fff">goclipadmin@gmail.com</strong></p>
-    </div>
+    <button class="btn-link" onclick="signOut()">Sign out</button>
   </div>
+
   <a href="https://goclip.io" class="back">← Back to GoClip</a>
 </div>
 
 <script>
 var API_BASE = 'https://web-production-d3e13.up.railway.app';
 
-// Tracks the looked-up license + plan so openPortal() doesn't need to refetch
+// In-memory only — token expires when the tab closes. More secure than
+// localStorage for short-lived auth like this.
+var authToken    = null;
+var authEmail    = null;
 var currentLicense = null;
-var currentPlan = null;
+var currentPlan    = null;
 
-function lookup() {
+function setError(elemId, msg) {
+  var el = document.getElementById(elemId);
+  el.textContent = msg || '';
+}
+
+function showStep(n) {
+  document.getElementById('step1').style.display = (n === 1) ? 'block' : 'none';
+  document.getElementById('step2').style.display = (n === 2) ? 'block' : 'none';
+  document.getElementById('step3').style.display = (n === 3) ? 'block' : 'none';
+  setError('step1Error', '');
+  setError('step2Error', '');
+  setError('step3Error', '');
+}
+
+function resetToStep1() {
+  authToken = null;
+  authEmail = null;
+  currentLicense = null;
+  currentPlan = null;
+  document.getElementById('codeInput').value = '';
+  showStep(1);
+  document.getElementById('emailInput').focus();
+}
+
+function signOut() {
+  resetToStep1();
+}
+
+// ─── STEP 1: Request code ────────────────────────────────────────────────
+function requestCode() {
   var email = document.getElementById('emailInput').value.trim();
-  var btn = document.getElementById('lookupBtn');
-  var result = document.getElementById('result');
+  var btn = document.getElementById('requestBtn');
 
   if (!email || !email.includes('@')) {
-    alert('Please enter a valid email address.');
+    setError('step1Error', 'Please enter a valid email address.');
     return;
   }
 
-  btn.textContent = 'Looking up...';
+  btn.textContent = 'Sending...';
   btn.disabled = true;
+  setError('step1Error', '');
 
-  fetch(API_BASE + '/admin/check-email?email=' + encodeURIComponent(email))
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      result.style.display = 'block';
-      if (data.licenses && data.licenses.length > 0) {
-        var lic = data.licenses[0];
-        currentLicense = lic.key;
-        currentPlan = (lic.plan || 'free').toLowerCase();
-
-        result.className = 'result success';
-        document.getElementById('keyDisplay').textContent = lic.key;
-        document.getElementById('successContent').style.display = 'block';
-        document.getElementById('errorContent').style.display = 'none';
-
-        // Render the account section based on plan
-        renderAccountSection(currentPlan);
-      } else {
-        currentLicense = null;
-        currentPlan = null;
-        result.className = 'result error';
-        document.getElementById('successContent').style.display = 'none';
-        document.getElementById('errorContent').style.display = 'block';
+  fetch(API_BASE + '/auth/request-code', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email })
+  })
+    .then(function(r) {
+      if (!r.ok) {
+        return r.json().then(function(d) { throw new Error(d.detail || ('HTTP ' + r.status)); });
       }
-      btn.textContent = 'Find My Key →';
-      btn.disabled = false;
+      return r.json();
     })
-    .catch(function() {
-      result.style.display = 'block';
-      result.className = 'result error';
-      document.getElementById('successContent').style.display = 'none';
-      document.getElementById('errorContent').style.display = 'block';
-      btn.textContent = 'Find My Key →';
+    .then(function() {
+      // Always advance to step 2 — the API doesn't reveal whether the email
+      // is real (anti-enumeration). User who typoed will just get no email.
+      authEmail = email;
+      document.getElementById('emailEcho').textContent = email;
+      showStep(2);
+      setTimeout(function() { document.getElementById('codeInput').focus(); }, 100);
+    })
+    .catch(function(e) {
+      setError('step1Error', e.message || 'Could not send code. Try again.');
+    })
+    .finally(function() {
+      btn.textContent = 'Send Verification Code →';
       btn.disabled = false;
     });
 }
 
-function renderAccountSection(plan) {
-  var section = document.getElementById('accountSection');
-  var badge   = document.getElementById('planBadge');
-  var btn     = document.getElementById('billingBtn');
-  var err     = document.getElementById('accountError');
+// ─── STEP 2: Verify code → fetch license + plan ─────────────────────────
+function verifyCode() {
+  var code = document.getElementById('codeInput').value.trim();
+  var btn = document.getElementById('verifyBtn');
 
-  err.style.display = 'none';
-  err.textContent = '';
-  section.style.display = 'block';
+  if (!code || !/^\d{6}$/.test(code)) {
+    setError('step2Error', 'Code must be 6 digits.');
+    return;
+  }
 
-  // Plan badge — color-coded so the user immediately sees their tier
-  badge.textContent = plan;
-  badge.className = 'plan-badge ' + (plan === 'free' ? 'free'
-                                   : plan === 'premium' ? 'premium' : 'pro');
+  btn.textContent = 'Verifying...';
+  btn.disabled = true;
+  setError('step2Error', '');
 
-  if (plan === 'free') {
-    // Free users can't open the portal (no Stripe customer). Show an
-    // upgrade CTA instead — this turns the recovery page into a soft
-    // upsell. Most "I lost my key" flows are inactive users we want
-    // to re-engage anyway.
+  fetch(API_BASE + '/auth/verify-code', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: authEmail, code: code })
+  })
+    .then(function(r) {
+      return r.json().then(function(d) {
+        if (!r.ok) throw new Error(d.detail || ('HTTP ' + r.status));
+        return d;
+      });
+    })
+    .then(function(data) {
+      authToken = data.token;
+      // Now look up the license, gated by the new token
+      return fetch(API_BASE + '/admin/check-email?email=' + encodeURIComponent(authEmail), {
+        headers: { 'Authorization': 'Bearer ' + authToken }
+      });
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.licenses && data.licenses.length > 0) {
+        var lic = data.licenses[0];
+        currentLicense = lic.key;
+        currentPlan = (lic.plan || 'free').toLowerCase();
+        showLicenseScreen();
+      } else {
+        // Verified but no license attached to this email. Means the user
+        // signed up for free but never completed checkout. Send them to
+        // pricing.
+        setError('step2Error', 'No license found for this email. Contact goclipadmin@gmail.com if this is unexpected.');
+      }
+    })
+    .catch(function(e) {
+      setError('step2Error', e.message || 'Verification failed.');
+    })
+    .finally(function() {
+      btn.textContent = 'Verify →';
+      btn.disabled = false;
+    });
+}
+
+// ─── STEP 3: Show license + plan + billing controls ─────────────────────
+function showLicenseScreen() {
+  document.getElementById('verifiedEmail').textContent = authEmail;
+  document.getElementById('keyDisplay').textContent = currentLicense;
+
+  var badge = document.getElementById('planBadge');
+  var btn   = document.getElementById('billingBtn');
+  badge.textContent = currentPlan;
+  badge.className = 'plan-badge ' + (currentPlan === 'free' ? 'free'
+                                   : currentPlan === 'premium' ? 'premium' : 'pro');
+
+  if (currentPlan === 'free') {
     btn.textContent = 'Upgrade to Pro →';
     btn.className = 'btn-secondary btn-upsell';
     btn.onclick = function() {
       window.location.href = 'https://goclip.io/#pricing';
     };
   } else {
-    // Paid user — open the Stripe Customer Portal
     btn.textContent = 'Manage Billing →';
     btn.className = 'btn-secondary';
     btn.onclick = openPortal;
   }
+  showStep(3);
 }
 
 function openPortal() {
-  if (!currentLicense) return;
+  if (!currentLicense || !authToken) return;
   var btn = document.getElementById('billingBtn');
-  var err = document.getElementById('accountError');
-
   btn.disabled = true;
   btn.textContent = 'Opening...';
-  err.style.display = 'none';
+  setError('step3Error', '');
 
   fetch(API_BASE + '/billing/portal', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + authToken
+    },
     body: JSON.stringify({
       license_key: currentLicense,
       return_url: window.location.href
     })
   })
     .then(function(r) {
-      // 404 is the "free / no Stripe customer" case — fall through to
-      // the upgrade CTA. Other non-200 responses surface the message.
       if (r.status === 404) {
         return r.json().then(function(d) {
           throw new Error('UPGRADE_REQUIRED:' + (d.detail || ''));
         });
       }
+      if (r.status === 401) {
+        // Token expired (15-min window) — kick back to verification
+        throw new Error('SESSION_EXPIRED:Your session expired. Please verify your email again.');
+      }
       if (!r.ok) {
-        return r.json().then(function(d) {
-          throw new Error(d.detail || ('HTTP ' + r.status));
-        });
+        return r.json().then(function(d) { throw new Error(d.detail || ('HTTP ' + r.status)); });
       }
       return r.json();
     })
     .then(function(data) {
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        throw new Error('No portal URL returned');
-      }
+      if (data.url) window.location.href = data.url;
+      else throw new Error('No portal URL returned');
     })
     .catch(function(e) {
       var msg = e.message || 'Could not open billing portal';
-      // Free user case — softly redirect to pricing instead of showing error
       if (msg.indexOf('UPGRADE_REQUIRED') === 0) {
         window.location.href = 'https://goclip.io/#pricing';
         return;
       }
-      err.textContent = msg;
-      err.style.display = 'block';
+      if (msg.indexOf('SESSION_EXPIRED') === 0) {
+        alert(msg.replace('SESSION_EXPIRED:', ''));
+        resetToStep1();
+        return;
+      }
+      setError('step3Error', msg);
       btn.disabled = false;
-      btn.textContent = 'Manage Billing →';
+      btn.textContent = currentPlan === 'free' ? 'Upgrade to Pro →' : 'Manage Billing →';
     });
 }
 
 function copyKey() {
-  var key = document.getElementById('keyDisplay').textContent;
-  navigator.clipboard.writeText(key).then(function() {
-    var btn = event.target;
+  navigator.clipboard.writeText(currentLicense).then(function() {
+    var btn = document.getElementById('copyBtn');
     btn.textContent = 'Copied!';
     setTimeout(function() { btn.textContent = 'Copy Key'; }, 2000);
   });
