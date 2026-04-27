@@ -26,6 +26,20 @@ button:disabled{opacity:0.5;cursor:not-allowed;transform:none}
 .copy-btn{background:transparent;border:1px solid rgba(0,255,136,0.3);color:#00ff88;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;width:auto;font-family:inherit}
 .back{display:inline-block;color:rgba(255,255,255,0.3);font-size:13px;text-decoration:none;margin-top:24px;transition:color 0.2s}
 .back:hover{color:#fff}
+/* Account-management section appears below the key when lookup succeeds */
+.account-section{margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.08)}
+.plan-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;font-size:13px}
+.plan-row .label{color:rgba(255,255,255,0.45);font-weight:600}
+.plan-badge{display:inline-block;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;font-family:'DM Mono',monospace}
+.plan-badge.free{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.12)}
+.plan-badge.pro{background:rgba(0,255,136,0.12);color:#00ff88;border:1px solid rgba(0,255,136,0.3)}
+.plan-badge.premium{background:rgba(192,132,252,0.12);color:#c084fc;border:1px solid rgba(192,132,252,0.3)}
+.btn-secondary{background:transparent;border:1px solid rgba(255,255,255,0.15);color:#fff;padding:14px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:inherit;margin-top:10px;transition:all 0.2s}
+.btn-secondary:hover{border-color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.04)}
+.btn-secondary:disabled{opacity:0.5;cursor:not-allowed}
+.btn-upsell{background:rgba(192,132,252,0.1);border:1px solid rgba(192,132,252,0.35);color:#c084fc}
+.btn-upsell:hover{background:rgba(192,132,252,0.18);border-color:rgba(192,132,252,0.5)}
+.account-error{color:#ff6060;font-size:12px;margin-top:8px;display:none}
 </style>
 </head>
 <body>
@@ -41,6 +55,19 @@ button:disabled{opacity:0.5;cursor:not-allowed;transform:none}
       <div class="key-value" id="keyDisplay">—</div>
       <button class="copy-btn" onclick="copyKey()">Copy Key</button>
       <p style="margin-top:12px;font-size:13px;color:rgba(255,255,255,0.35)">Enter this key in GoClip Settings → License Key → Validate</p>
+
+      <!-- Account-management section: shown once we know the user's plan.
+           Paid users get "Manage Billing" → Stripe Customer Portal.
+           Free users get "Upgrade to Pro" → pricing page on landing site.
+           This is the soft upsell + self-serve billing in one section. -->
+      <div class="account-section" id="accountSection" style="display:none">
+        <div class="plan-row">
+          <span class="label">Current plan</span>
+          <span class="plan-badge" id="planBadge">—</span>
+        </div>
+        <button id="billingBtn" class="btn-secondary" onclick="openPortal()">Manage Billing →</button>
+        <div class="account-error" id="accountError"></div>
+      </div>
     </div>
     <div id="errorContent" style="display:none">
       <p style="color:#ff6060;margin:0">No license found for that email. Make sure you're using the email you purchased with.<br/><br/>Need help? Email <strong style="color:#fff">goclipadmin@gmail.com</strong></p>
@@ -50,29 +77,44 @@ button:disabled{opacity:0.5;cursor:not-allowed;transform:none}
 </div>
 
 <script>
+var API_BASE = 'https://web-production-d3e13.up.railway.app';
+
+// Tracks the looked-up license + plan so openPortal() doesn't need to refetch
+var currentLicense = null;
+var currentPlan = null;
+
 function lookup() {
   var email = document.getElementById('emailInput').value.trim();
   var btn = document.getElementById('lookupBtn');
   var result = document.getElementById('result');
-  
+
   if (!email || !email.includes('@')) {
     alert('Please enter a valid email address.');
     return;
   }
-  
+
   btn.textContent = 'Looking up...';
   btn.disabled = true;
-  
-  fetch('https://web-production-d3e13.up.railway.app/admin/check-email?email=' + encodeURIComponent(email))
-    .then(r => r.json())
-    .then(data => {
+
+  fetch(API_BASE + '/admin/check-email?email=' + encodeURIComponent(email))
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
       result.style.display = 'block';
       if (data.licenses && data.licenses.length > 0) {
+        var lic = data.licenses[0];
+        currentLicense = lic.key;
+        currentPlan = (lic.plan || 'free').toLowerCase();
+
         result.className = 'result success';
-        document.getElementById('keyDisplay').textContent = data.licenses[0].key;
+        document.getElementById('keyDisplay').textContent = lic.key;
         document.getElementById('successContent').style.display = 'block';
         document.getElementById('errorContent').style.display = 'none';
+
+        // Render the account section based on plan
+        renderAccountSection(currentPlan);
       } else {
+        currentLicense = null;
+        currentPlan = null;
         result.className = 'result error';
         document.getElementById('successContent').style.display = 'none';
         document.getElementById('errorContent').style.display = 'block';
@@ -80,7 +122,7 @@ function lookup() {
       btn.textContent = 'Find My Key →';
       btn.disabled = false;
     })
-    .catch(() => {
+    .catch(function() {
       result.style.display = 'block';
       result.className = 'result error';
       document.getElementById('successContent').style.display = 'none';
@@ -90,12 +132,98 @@ function lookup() {
     });
 }
 
+function renderAccountSection(plan) {
+  var section = document.getElementById('accountSection');
+  var badge   = document.getElementById('planBadge');
+  var btn     = document.getElementById('billingBtn');
+  var err     = document.getElementById('accountError');
+
+  err.style.display = 'none';
+  err.textContent = '';
+  section.style.display = 'block';
+
+  // Plan badge — color-coded so the user immediately sees their tier
+  badge.textContent = plan;
+  badge.className = 'plan-badge ' + (plan === 'free' ? 'free'
+                                   : plan === 'premium' ? 'premium' : 'pro');
+
+  if (plan === 'free') {
+    // Free users can't open the portal (no Stripe customer). Show an
+    // upgrade CTA instead — this turns the recovery page into a soft
+    // upsell. Most "I lost my key" flows are inactive users we want
+    // to re-engage anyway.
+    btn.textContent = 'Upgrade to Pro →';
+    btn.className = 'btn-secondary btn-upsell';
+    btn.onclick = function() {
+      window.location.href = 'https://goclip.io/#pricing';
+    };
+  } else {
+    // Paid user — open the Stripe Customer Portal
+    btn.textContent = 'Manage Billing →';
+    btn.className = 'btn-secondary';
+    btn.onclick = openPortal;
+  }
+}
+
+function openPortal() {
+  if (!currentLicense) return;
+  var btn = document.getElementById('billingBtn');
+  var err = document.getElementById('accountError');
+
+  btn.disabled = true;
+  btn.textContent = 'Opening...';
+  err.style.display = 'none';
+
+  fetch(API_BASE + '/billing/portal', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      license_key: currentLicense,
+      return_url: window.location.href
+    })
+  })
+    .then(function(r) {
+      // 404 is the "free / no Stripe customer" case — fall through to
+      // the upgrade CTA. Other non-200 responses surface the message.
+      if (r.status === 404) {
+        return r.json().then(function(d) {
+          throw new Error('UPGRADE_REQUIRED:' + (d.detail || ''));
+        });
+      }
+      if (!r.ok) {
+        return r.json().then(function(d) {
+          throw new Error(d.detail || ('HTTP ' + r.status));
+        });
+      }
+      return r.json();
+    })
+    .then(function(data) {
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('No portal URL returned');
+      }
+    })
+    .catch(function(e) {
+      var msg = e.message || 'Could not open billing portal';
+      // Free user case — softly redirect to pricing instead of showing error
+      if (msg.indexOf('UPGRADE_REQUIRED') === 0) {
+        window.location.href = 'https://goclip.io/#pricing';
+        return;
+      }
+      err.textContent = msg;
+      err.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Manage Billing →';
+    });
+}
+
 function copyKey() {
   var key = document.getElementById('keyDisplay').textContent;
-  navigator.clipboard.writeText(key).then(() => {
+  navigator.clipboard.writeText(key).then(function() {
     var btn = event.target;
     btn.textContent = 'Copied!';
-    setTimeout(() => btn.textContent = 'Copy Key', 2000);
+    setTimeout(function() { btn.textContent = 'Copy Key'; }, 2000);
   });
 }
 </script>
